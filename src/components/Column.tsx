@@ -1,0 +1,120 @@
+import { useState } from 'react';
+import { useDroppable } from '@dnd-kit/core';
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { Card as CardType } from '../types';
+import { Card } from './Card';
+import { CardEditor } from './CardEditor';
+
+interface ColumnProps {
+  id: string;
+  title: string;
+  cards: CardType[];
+  onAddCard: (data: {
+    title: string;
+    content: string;
+    metadata: Partial<CardType['metadata']>;
+  }) => void;
+  onEditCard: (
+    cardId: string,
+    data: {
+      title: string;
+      content: string;
+      metadata: Partial<CardType['metadata']>;
+    }
+  ) => void;
+  onDeleteCard: (cardId: string) => void;
+}
+
+export const Column = ({
+  id,
+  title,
+  cards,
+  onAddCard,
+  onEditCard,
+  onDeleteCard,
+}: ColumnProps) => {
+  const [isAdding, setIsAdding] = useState(false);
+  const [editingCardId, setEditingCardId] = useState<string | null>(null);
+
+  const { setNodeRef, isOver } = useDroppable({ id });
+
+  const handleAddCard = (data: {
+    title: string;
+    content: string;
+    metadata: Partial<CardType['metadata']>;
+  }) => {
+    onAddCard(data);
+    setIsAdding(false);
+  };
+
+  const handleEditCard = (data: {
+    title: string;
+    content: string;
+    metadata: Partial<CardType['metadata']>;
+  }) => {
+    if (editingCardId) {
+      onEditCard(editingCardId, data);
+      setEditingCardId(null);
+    }
+  };
+
+  const editingCard = cards.find((card) => card.id === editingCardId);
+
+  return (
+    <div className="flex flex-col h-full w-80 bg-gray-50 rounded-lg">
+      <div className="px-4 py-3 border-b border-gray-200 bg-white rounded-t-lg">
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-semibold text-gray-800">{title}</h2>
+          <span className="bg-gray-200 text-gray-700 text-sm font-medium px-2 py-1 rounded-full">
+            {cards.length}
+          </span>
+        </div>
+      </div>
+
+      <div
+        ref={setNodeRef}
+        className={`flex-1 px-4 py-3 space-y-3 overflow-y-auto transition-colors ${
+          isOver ? 'bg-blue-50' : ''
+        }`}
+      >
+        <SortableContext items={cards.map((c) => c.id)} strategy={verticalListSortingStrategy}>
+          {cards.map((card) =>
+            editingCardId === card.id ? (
+              <CardEditor
+                key={card.id}
+                card={editingCard}
+                onSave={handleEditCard}
+                onCancel={() => setEditingCardId(null)}
+              />
+            ) : (
+              <Card
+                key={card.id}
+                card={card}
+                onEdit={() => setEditingCardId(card.id)}
+                onDelete={() => onDeleteCard(card.id)}
+              />
+            )
+          )}
+        </SortableContext>
+
+        {isAdding && (
+          <CardEditor
+            onSave={handleAddCard}
+            onCancel={() => setIsAdding(false)}
+          />
+        )}
+      </div>
+
+      <div className="px-4 py-3 border-t border-gray-200 bg-white rounded-b-lg">
+        {!isAdding && (
+          <button
+            onClick={() => setIsAdding(true)}
+            className="w-full px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            + New Card
+          </button>
+        )}
+      </div>
+    </div>
+  );
+};

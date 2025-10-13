@@ -23,6 +23,8 @@ export function setFileSystemAPI(api: FileSystemAPI) {
   fsAPI = api
 }
 
+export { fsAPI }
+
 /**
  * Read all markdown files from a column directory
  * @param columnId - Column folder name (e.g., 'backlog', 'in-progress', 'done')
@@ -33,7 +35,7 @@ export async function readCardsFromColumn(columnId: string): Promise<Card[]> {
 
   const columnPath = `${KANBAN_DATA_DIR}/${columnId}`
   const files = await fsAPI.readdir(columnPath)
-  const markdownFiles = files.filter((f) => f.endsWith('.md'))
+  const markdownFiles = files.filter((f: string) => f.endsWith('.md'))
 
   const cards: Card[] = []
   for (const file of markdownFiles) {

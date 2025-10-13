@@ -15,7 +15,7 @@ interface BoardState {
   
   // Actions
   loadCards: () => Promise<void>
-  addCard: (title: string, columnId: string, content?: string) => Promise<void>
+  addCard: (title: string, columnId: string, content?: string, metadata?: Partial<Card['metadata']>) => Promise<void>
   updateCard: (cardId: string, updates: Partial<Card>) => Promise<void>
   moveCard: (cardId: string, targetColumnId: string) => Promise<void>
   deleteCard: (cardId: string) => Promise<void>
@@ -53,9 +53,13 @@ export const useBoardStore = create<BoardState>((set, get) => ({
     }
   },
 
-  addCard: async (title: string, columnId: string, content = '') => {
+  addCard: async (title: string, columnId: string, content = '', metadata?: Partial<Card['metadata']>) => {
     try {
       const newCard = await createCardFile(title, columnId, content)
+      
+      if (metadata) {
+        newCard.metadata = { ...newCard.metadata, ...metadata }
+      }
       
       set((state) => ({
         columns: state.columns.map((col) =>
@@ -113,7 +117,6 @@ export const useBoardStore = create<BoardState>((set, get) => ({
   moveCard: async (cardId: string, targetColumnId: string) => {
     const { columns } = get()
     
-    // Find the card and its current column
     let targetCard: Card | null = null
     let sourceColumnId: string | null = null
     
@@ -132,10 +135,11 @@ export const useBoardStore = create<BoardState>((set, get) => ({
     }
 
     if (sourceColumnId === targetColumnId) {
-      return // No move needed
+      return
     }
 
-    // Optimistic update
+    const originalCard = { ...targetCard }
+
     set((state) => ({
       columns: state.columns.map((col) => {
         if (col.id === sourceColumnId) {
@@ -155,9 +159,20 @@ export const useBoardStore = create<BoardState>((set, get) => ({
     }))
 
     try {
-      await moveCardFile(targetCard, targetColumnId)
+      const updatedCard = await moveCardFile(originalCard, targetColumnId)
+      
+      set((state) => ({
+        columns: state.columns.map((col) => {
+          if (col.id === targetColumnId) {
+            return {
+              ...col,
+              cards: col.cards.map((c) => c.id === cardId ? updatedCard : c),
+            }
+          }
+          return col
+        }),
+      }))
     } catch (error) {
-      // Rollback on failure
       set((state) => ({
         columns: state.columns.map((col) => {
           if (col.id === targetColumnId) {
@@ -169,7 +184,7 @@ export const useBoardStore = create<BoardState>((set, get) => ({
           if (col.id === sourceColumnId) {
             return {
               ...col,
-              cards: [...col.cards, targetCard],
+              cards: [...col.cards, originalCard],
             }
           }
           return col
