@@ -135,9 +135,9 @@ export const Board = () => {
 
   if (!fsInitialized) {
     return (
-      <div className="flex items-center justify-center h-screen">
+      <div className="flex items-center justify-center h-screen bg-gray-100 dark:bg-gray-900">
         <div className="text-center">
-          <p className="text-lg text-gray-700 mb-4">
+          <p className="text-lg text-gray-700 dark:text-gray-200 mb-4">
             Please select the kanban-data directory to get started.
           </p>
           <button
@@ -153,15 +153,15 @@ export const Board = () => {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="text-gray-600">Loading board...</div>
+      <div className="flex items-center justify-center h-screen bg-gray-100 dark:bg-gray-900">
+        <div className="text-gray-600 dark:text-gray-300">Loading board...</div>
       </div>
     )
   }
 
   if (error) {
     return (
-      <div className="flex items-center justify-center h-screen">
+      <div className="flex items-center justify-center h-screen bg-gray-100 dark:bg-gray-900">
         <div className="text-red-600">Error: {error}</div>
       </div>
     )
@@ -173,7 +173,7 @@ export const Board = () => {
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
-      <div className="flex gap-4 p-6 h-screen overflow-x-auto">
+      <div className="flex gap-4 p-6 h-screen overflow-x-auto bg-gray-100 dark:bg-gray-900">
         {columns.map(column => (
           <Column
             key={column.id}

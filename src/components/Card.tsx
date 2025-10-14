@@ -6,7 +6,7 @@ import { CSS } from '@dnd-kit/utilities'
 interface CardProps {
   card: CardType
   onEdit: () => void
-  onDelete: (cardId: string)=> void
+  onDelete: (cardId: string) => void
 }
 
 export function Card({ card, onEdit, onDelete }: CardProps) {
@@ -50,11 +50,11 @@ export function Card({ card, onEdit, onDelete }: CardProps) {
       style={style}
       {...attributes}
       {...listeners}
-      className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow cursor-pointer"
+      className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 hover:shadow-md transition-shadow cursor-pointer"
     >
       <div className="flex justify-between items-start mb-2">
         <h3
-          className="font-medium text-gray-900 flex-1 cursor-pointer"
+          className="font-medium text-gray-900 dark:text-gray-100 flex-1 cursor-pointer"
           onClick={onEdit}
         >
           {card.title}
@@ -75,7 +75,7 @@ export function Card({ card, onEdit, onDelete }: CardProps) {
 
       {card.content && (
         <p
-          className="text-sm text-gray-600 mb-3 line-clamp-3 cursor-pointer"
+          className="text-sm text-gray-600 dark:text-gray-300 mb-3 line-clamp-3 cursor-pointer"
           onClick={onEdit}
         >
           {card.content}
@@ -85,15 +85,27 @@ export function Card({ card, onEdit, onDelete }: CardProps) {
       <div className="flex flex-wrap gap-2 items-center text-xs">
         {card.metadata.tags && card.metadata.tags.length > 0 && (
           <div className="flex flex-wrap gap-1">
-            {card.metadata.tags.map((tag) => (
+            {card.metadata.tags.map(tag => (
               <span
                 key={tag}
-                className="bg-blue-100 text-blue-700 px-2 py-1 rounded"
+                className="bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-2 py-1 rounded"
               >
                 {tag}
               </span>
             ))}
           </div>
+        )}
+
+        {card.metadata.assignee && (
+          <span className="bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 px-2 py-1 rounded">
+            {card.metadata.assignee}
+          </span>
+        )}
+
+        {card.metadata.dueDate && (
+          <span className="bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 px-2 py-1 rounded">
+            Due {formatDate(card.metadata.dueDate)}
+          </span>
         )}
 
         {card.metadata.assignee && (

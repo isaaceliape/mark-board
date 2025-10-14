@@ -12,10 +12,15 @@ interface BoardState {
   columns: Column[]
   isLoading: boolean
   error: string | null
-  
+
   // Actions
   loadCards: () => Promise<void>
-  addCard: (title: string, columnId: string, content?: string, metadata?: Partial<Card['metadata']>) => Promise<void>
+  addCard: (
+    title: string,
+    columnId: string,
+    content?: string,
+    metadata?: Partial<Card['metadata']>
+  ) => Promise<void>
   updateCard: (cardId: string, updates: Partial<Card>) => Promise<void>
   moveCard: (cardId: string, targetColumnId: string) => Promise<void>
   deleteCard: (cardId: string) => Promise<void>
@@ -31,7 +36,7 @@ const COLUMN_TITLES: Record<string, string> = {
 }
 
 export const useBoardStore = create<BoardState>((set, get) => ({
-  columns: COLUMN_IDS.map((id) => ({
+  columns: COLUMN_IDS.map(id => ({
     id,
     title: COLUMN_TITLES[id],
     cards: [],
@@ -45,7 +50,8 @@ export const useBoardStore = create<BoardState>((set, get) => ({
       const cards = await readAllCards(COLUMN_IDS)
       get().syncFromFileSystem(cards)
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Failed to load cards'
+      const message =
+        error instanceof Error ? error.message : 'Failed to load cards'
       set({ error: message })
       console.error('Error loading cards:', error)
     } finally {
@@ -53,23 +59,27 @@ export const useBoardStore = create<BoardState>((set, get) => ({
     }
   },
 
-  addCard: async (title: string, columnId: string, content = '', metadata?: Partial<Card['metadata']>) => {
+  addCard: async (
+    title: string,
+    columnId: string,
+    content = '',
+    metadata?: Partial<Card['metadata']>
+  ) => {
     try {
       const newCard = await createCardFile(title, columnId, content)
-      
+
       if (metadata) {
         newCard.metadata = { ...newCard.metadata, ...metadata }
       }
-      
-      set((state) => ({
-        columns: state.columns.map((col) =>
-          col.id === columnId
-            ? { ...col, cards: [...col.cards, newCard] }
-            : col
+
+      set(state => ({
+        columns: state.columns.map(col =>
+          col.id === columnId ? { ...col, cards: [...col.cards, newCard] } : col
         ),
       }))
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Failed to create card'
+      const message =
+        error instanceof Error ? error.message : 'Failed to create card'
       set({ error: message })
       console.error('Error creating card:', error)
       throw error
@@ -78,11 +88,11 @@ export const useBoardStore = create<BoardState>((set, get) => ({
 
   updateCard: async (cardId: string, updates: Partial<Card>) => {
     const { columns } = get()
-    
+
     // Find the card
     let targetCard: Card | null = null
     for (const column of columns) {
-      const card = column.cards.find((c) => c.id === cardId)
+      const card = column.cards.find(c => c.id === cardId)
       if (card) {
         targetCard = card
         break
@@ -98,16 +108,17 @@ export const useBoardStore = create<BoardState>((set, get) => ({
       const updatedCard = { ...targetCard, ...updates }
       await updateCardFile(updatedCard)
 
-      set((state) => ({
-        columns: state.columns.map((col) => ({
+      set(state => ({
+        columns: state.columns.map(col => ({
           ...col,
-          cards: col.cards.map((card) =>
+          cards: col.cards.map(card =>
             card.id === cardId ? updatedCard : card
           ),
         })),
       }))
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Failed to update card'
+      const message =
+        error instanceof Error ? error.message : 'Failed to update card'
       set({ error: message })
       console.error('Error updating card:', error)
       throw error
@@ -116,12 +127,12 @@ export const useBoardStore = create<BoardState>((set, get) => ({
 
   moveCard: async (cardId: string, targetColumnId: string) => {
     const { columns } = get()
-    
+
     let targetCard: Card | null = null
     let sourceColumnId: string | null = null
-    
+
     for (const column of columns) {
-      const card = column.cards.find((c) => c.id === cardId)
+      const card = column.cards.find(c => c.id === cardId)
       if (card) {
         targetCard = card
         sourceColumnId = column.id
@@ -140,12 +151,12 @@ export const useBoardStore = create<BoardState>((set, get) => ({
 
     const originalCard = { ...targetCard }
 
-    set((state) => ({
-      columns: state.columns.map((col) => {
+    set(state => ({
+      columns: state.columns.map(col => {
         if (col.id === sourceColumnId) {
           return {
             ...col,
-            cards: col.cards.filter((c) => c.id !== cardId),
+            cards: col.cards.filter(c => c.id !== cardId),
           }
         }
         if (col.id === targetColumnId) {
@@ -160,25 +171,25 @@ export const useBoardStore = create<BoardState>((set, get) => ({
 
     try {
       const updatedCard = await moveCardFile(originalCard, targetColumnId)
-      
-      set((state) => ({
-        columns: state.columns.map((col) => {
+
+      set(state => ({
+        columns: state.columns.map(col => {
           if (col.id === targetColumnId) {
             return {
               ...col,
-              cards: col.cards.map((c) => c.id === cardId ? updatedCard : c),
+              cards: col.cards.map(c => (c.id === cardId ? updatedCard : c)),
             }
           }
           return col
         }),
       }))
     } catch (error) {
-      set((state) => ({
-        columns: state.columns.map((col) => {
+      set(state => ({
+        columns: state.columns.map(col => {
           if (col.id === targetColumnId) {
             return {
               ...col,
-              cards: col.cards.filter((c) => c.id !== cardId),
+              cards: col.cards.filter(c => c.id !== cardId),
             }
           }
           if (col.id === sourceColumnId) {
@@ -191,7 +202,8 @@ export const useBoardStore = create<BoardState>((set, get) => ({
         }),
       }))
 
-      const message = error instanceof Error ? error.message : 'Failed to move card'
+      const message =
+        error instanceof Error ? error.message : 'Failed to move card'
       set({ error: message })
       console.error('Error moving card:', error)
       throw error
@@ -200,11 +212,11 @@ export const useBoardStore = create<BoardState>((set, get) => ({
 
   deleteCard: async (cardId: string) => {
     const { columns } = get()
-    
+
     // Find the card
     let targetCard: Card | null = null
     for (const column of columns) {
-      const card = column.cards.find((c) => c.id === cardId)
+      const card = column.cards.find(c => c.id === cardId)
       if (card) {
         targetCard = card
         break
@@ -219,14 +231,15 @@ export const useBoardStore = create<BoardState>((set, get) => ({
     try {
       await deleteCardFile(targetCard)
 
-      set((state) => ({
-        columns: state.columns.map((col) => ({
+      set(state => ({
+        columns: state.columns.map(col => ({
           ...col,
-          cards: col.cards.filter((card) => card.id !== cardId),
+          cards: col.cards.filter(card => card.id !== cardId),
         })),
       }))
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Failed to delete card'
+      const message =
+        error instanceof Error ? error.message : 'Failed to delete card'
       set({ error: message })
       console.error('Error deleting card:', error)
       throw error
@@ -234,10 +247,10 @@ export const useBoardStore = create<BoardState>((set, get) => ({
   },
 
   syncFromFileSystem: (cards: Card[]) => {
-    set((state) => ({
-      columns: state.columns.map((col) => ({
+    set(state => ({
+      columns: state.columns.map(col => ({
         ...col,
-        cards: cards.filter((card) => card.column === col.id),
+        cards: cards.filter(card => card.column === col.id),
       })),
     }))
   },

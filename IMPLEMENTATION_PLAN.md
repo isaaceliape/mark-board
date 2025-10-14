@@ -176,6 +176,7 @@ kanban-data/
 - [ ] Add animations and transitions
 - [ ] Improve mobile responsiveness
 - [ ] Add dark mode support
+- [ ] Implement toggle button in top right corner for dark/light mode
 - [ ] Create app icon and branding
 - [ ] Write user documentation
 
