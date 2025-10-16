@@ -35,11 +35,21 @@ try {
         const original = execSync('git show HEAD:index.html', {
           encoding: 'utf8',
         })
-        fs.writeFileSync(indexPath, original, 'utf8')
-        log('Restored index.html from git HEAD')
+        const headLooksBuilt =
+          original.includes('/assets/') ||
+          original.includes('crossorigin src="/assets/')
+        if (!headLooksBuilt) {
+          fs.writeFileSync(indexPath, original, 'utf8')
+          log('Restored index.html from git HEAD')
+        } else {
+          // HEAD contains a built index.html; restore to dev template instead
+          const devHtml = `<!doctype html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <link rel=\"icon\" type=\"image/svg+xml\" href=\"/vite.svg\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>Mark Board - Markdown Kanban</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script type=\"module\" src=\"/src/main.tsx\"></script>\n  </body>\n</html>\n`
+          fs.writeFileSync(indexPath, devHtml, 'utf8')
+          log('HEAD index.html looked built; rewrote to dev template')
+        }
       } catch {
         // Fallback: write a minimal dev index.html known-good template
-        const devHtml = `<!doctype html>\n<html lang="en">\n  <head>\n    <meta charset="UTF-8" />\n    <link rel="icon" type="image/svg+xml" href="/vite.svg" />\n    <meta name="viewport" content="width=device-width, initial-scale=1.0" />\n    <title>Mark Board - Markdown Kanban</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script type=\"module\" src=\"/src/main.tsx\"></script>\n  </body>\n</html>\n`
+        const devHtml = `<!doctype html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <link rel=\"icon\" type=\"image/svg+xml\" href=\"/vite.svg\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>Mark Board - Markdown Kanban</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script type=\"module\" src=\"/src/main.tsx\"></script>\n  </body>\n</html>\n`
         fs.writeFileSync(indexPath, devHtml, 'utf8')
         log('Rewrote index.html to dev template (git not available)')
       }
