@@ -14,7 +14,7 @@ A visual kanban board application that manages tasks using markdown files organi
 
 ### Prerequisites
 
-- Node.js 18+ and npm
+- Node.js 18+ and bun
 
 ### Installation
 

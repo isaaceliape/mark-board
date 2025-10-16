@@ -1,16 +1,25 @@
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 
 // https://vitejs.dev/config/
-export default defineConfig({
-  plugins: [react()],
-  define: {
-    global: 'globalThis',
-  },
-  // Ensure correct asset URLs when hosted at /mark-board/
-  base: '/mark-board/',
-  build: {
-    outDir: '.',
-    emptyOutDir: false,
-  },
+export default defineConfig(({ mode }) => {
+  // Resolve project root without relying on Node typings
+  const root = new URL('.', import.meta.url).pathname
+  const env = loadEnv(mode, root, '')
+
+  const isDev = mode === 'development'
+  const base = isDev ? env.VITE_BASE || '/' : '/mark-board/'
+
+  return {
+    plugins: [react()],
+    define: {
+      global: 'globalThis',
+    },
+    // Ensure correct asset URLs based on environment
+    base,
+    build: {
+      outDir: '.',
+      emptyOutDir: false,
+    },
+  }
 })
