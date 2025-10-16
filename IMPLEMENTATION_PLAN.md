@@ -156,6 +156,19 @@ kanban-data/
 - [ ] Debounce file operations
 - [ ] Lazy load card content
 
+### 6.4 User Story Co-Creator Page
+
+- [ ] Add route `/co-create` and nav link
+- [ ] Split layout: left AI chat, right markdown editor (resizable)
+- [ ] Implement chat UI with streaming responses (provider-agnostic adapter)
+- [ ] Add prompt templates for user stories and acceptance criteria
+- [ ] Maintain conversation state; allow reset and save transcript
+- [ ] Editor: markdown with live preview toggle and formatting shortcuts
+- [ ] One-click insert suggestions from chat into editor (append/replace/apply diff)
+- [ ] Export: save as new card markdown into `kanban-data/backlog/` with frontmatter
+- [ ] Error handling: rate limits, retries, and user-facing toasts
+- [ ] Config: read `import.meta.env.VITE_AI_API_KEY`; provide mock mode when unset
+
 ## Phase 7: Testing & Polish (Week 4-5)
 
 ### 7.1 Unit Tests

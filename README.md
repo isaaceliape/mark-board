@@ -76,9 +76,16 @@ dueDate: 2024-01-15
 Card content with full markdown support.
 
 ## Checklist
+
 - [ ] Task 1
 - [ ] Task 2
 ```
+
+## Screenshots
+
+![Board Screenshot 1](src/assets/Screenshot%201.png)
+
+![Board Screenshot 2](src/assets/Screenshot%202.png)
 
 ## License
 
