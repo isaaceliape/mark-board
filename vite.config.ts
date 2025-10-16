@@ -18,8 +18,8 @@ export default defineConfig(({ mode }) => {
     // Ensure correct asset URLs based on environment
     base,
     build: {
-      outDir: '.',
-      emptyOutDir: false,
+      outDir: 'docs',
+      emptyOutDir: true,
     },
   }
 })
