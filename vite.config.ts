@@ -7,6 +7,8 @@ export default defineConfig({
   define: {
     global: 'globalThis',
   },
+  // Ensure correct asset URLs when hosted at /mark-board/
+  base: '/mark-board/',
   build: {
     outDir: '.',
     emptyOutDir: false,
