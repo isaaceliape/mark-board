@@ -70,6 +70,8 @@ export async function loadStoredFileSystem(): Promise<boolean> {
       },
 
       readFile: async (path: string, encoding: string) => {
+        void encoding
+        void encoding
         const fileHandle = await getFileHandle(path, storedHandle)
         const file = await fileHandle.getFile()
         return await file.text()
@@ -97,6 +99,7 @@ export async function loadStoredFileSystem(): Promise<boolean> {
       },
 
       mkdir: async (path: string, options?: { recursive: boolean }) => {
+        void options
         const parts = path.split('/').filter(p => p)
         let currentHandle = storedHandle
         for (const part of parts) {
@@ -139,6 +142,7 @@ export async function initializeFileSystem(): Promise<void> {
       },
 
       readFile: async (path: string, encoding: string) => {
+        void encoding
         const fileHandle = await getFileHandle(path, directoryHandle)
         const file = await fileHandle.getFile()
         return await file.text()
@@ -166,6 +170,7 @@ export async function initializeFileSystem(): Promise<void> {
       },
 
       mkdir: async (path: string, options?: { recursive: boolean }) => {
+        void options
         const parts = path.split('/').filter(p => p)
         let currentHandle = directoryHandle
         for (const part of parts) {
