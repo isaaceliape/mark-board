@@ -2,6 +2,10 @@
 
 A visual kanban board application that manages tasks using markdown files organized in folders.
 
+![Board Screenshot 1](src/assets/Screenshot%201.png)
+
+![Board Screenshot 2](src/assets/Screenshot%202.png)
+
 ## Features
 
 - 📁 File-based storage with markdown files
@@ -80,12 +84,6 @@ Card content with full markdown support.
 - [ ] Task 1
 - [ ] Task 2
 ```
-
-## Screenshots
-
-![Board Screenshot 1](src/assets/Screenshot%201.png)
-
-![Board Screenshot 2](src/assets/Screenshot%202.png)
 
 ## License
 
