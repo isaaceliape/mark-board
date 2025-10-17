@@ -132,6 +132,18 @@ describe('boardStore', () => {
     })
 
     it('should handle errors when updating a card', async () => {
+      // First add a card to the store
+      const newCard = {
+        ...mockCards[0],
+        id: 'error-update-card',
+        title: 'Error Update Card',
+        column: 'backlog',
+      }
+
+      ;(fileOperations.createCard as jest.Mock).mockResolvedValue(newCard)
+      await useBoardStore.getState().addCard('Error Update Card', 'backlog')
+
+      // Mock the update operation to fail
       ;(fileOperations.updateCard as jest.Mock).mockRejectedValue(
         new Error('Failed to update')
       )
@@ -139,11 +151,20 @@ describe('boardStore', () => {
       await expect(
         useBoardStore
           .getState()
-          .updateCard('non-existent', { title: 'Updated Title' })
+          .updateCard('error-update-card', { title: 'Updated Title' })
       ).rejects.toThrow('Failed to update')
 
       const state = useBoardStore.getState()
       expect(state.error).toBe('Failed to update')
+    })
+
+    it('should set error when card not found for update', async () => {
+      await useBoardStore
+        .getState()
+        .updateCard('non-existent', { title: 'Updated Title' })
+
+      const state = useBoardStore.getState()
+      expect(state.error).toBe('Card not found')
     })
   })
 
@@ -218,16 +239,35 @@ describe('boardStore', () => {
     })
 
     it('should handle errors when deleting a card', async () => {
+      // First add a card to the store
+      const newCard = {
+        ...mockCards[0],
+        id: 'error-delete-card',
+        title: 'Error Delete Card',
+        column: 'backlog',
+      }
+
+      ;(fileOperations.createCard as jest.Mock).mockResolvedValue(newCard)
+      await useBoardStore.getState().addCard('Error Delete Card', 'backlog')
+
+      // Mock the delete operation to fail
       ;(fileOperations.deleteCard as jest.Mock).mockRejectedValue(
         new Error('Failed to delete')
       )
 
       await expect(
-        useBoardStore.getState().deleteCard('non-existent')
+        useBoardStore.getState().deleteCard('error-delete-card')
       ).rejects.toThrow('Failed to delete')
 
       const state = useBoardStore.getState()
       expect(state.error).toBe('Failed to delete')
+    })
+
+    it('should set error when card not found for deletion', async () => {
+      await useBoardStore.getState().deleteCard('non-existent')
+
+      const state = useBoardStore.getState()
+      expect(state.error).toBe('Card not found')
     })
   })
 

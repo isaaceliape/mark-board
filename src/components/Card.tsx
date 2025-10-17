@@ -113,18 +113,6 @@ export function Card({ card, onEdit, onDelete }: CardProps) {
             Due {formatDate(card.metadata.dueDate)}
           </span>
         )}
-
-        {card.metadata.assignee && (
-          <span className="bg-purple-100 text-purple-700 px-2 py-1 rounded">
-            {card.metadata.assignee}
-          </span>
-        )}
-
-        {card.metadata.dueDate && (
-          <span className="bg-orange-100 text-orange-700 px-2 py-1 rounded">
-            Due {formatDate(card.metadata.dueDate)}
-          </span>
-        )}
       </div>
     </div>
   )
