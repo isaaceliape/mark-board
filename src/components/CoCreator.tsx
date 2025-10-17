@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels'
 import MDEditor from '@uiw/react-md-editor'
 import toast, { Toaster } from 'react-hot-toast'
@@ -6,29 +7,78 @@ import { ChatInterface } from './ChatInterface'
 import { AIMessage, AIProvider } from '../types/ai'
 import { createCard } from '../utils/fileOperations'
 import { aiService } from '../utils/aiService'
+import { useBoardStore } from '../stores/boardStore'
 
 export function CoCreator() {
+  const [searchParams] = useSearchParams()
   const [editorContent, setEditorContent] = useState<string>('')
   const [messages, setMessages] = useState<AIMessage[]>([])
   const [isLoading, setIsLoading] = useState(false)
+  const [editingCardId, setEditingCardId] = useState<string | null>(null)
+  const updateCardInStore = useBoardStore(state => state.updateCard)
 
-  // Load conversation from localStorage on mount
+  // Load conversation from localStorage on mount and handle URL params
   useEffect(() => {
-    const savedMessages = localStorage.getItem('co-creator-messages')
-    const savedContent = localStorage.getItem('co-creator-content')
+    const cardId = searchParams.get('cardId')
+    const title = searchParams.get('title')
+    const content = searchParams.get('content')
+    const tags = searchParams.get('tags')
+    const assignee = searchParams.get('assignee')
+    const dueDate = searchParams.get('dueDate')
 
-    if (savedMessages) {
-      try {
-        setMessages(JSON.parse(savedMessages))
-      } catch (error) {
-        console.error('Failed to parse saved messages:', error)
+    // If we have card data from URL params, pre-populate the editor
+    if (title || content) {
+      setEditingCardId(cardId)
+
+      let prefilledContent = ''
+
+      if (title) {
+        prefilledContent += `# ${title}\n\n`
+      }
+
+      if (content) {
+        prefilledContent += `${content}\n\n`
+      }
+
+      // Add metadata if available
+      if (tags || assignee || dueDate) {
+        prefilledContent += '---\n'
+        if (tags) prefilledContent += `tags: [${tags}]\n`
+        if (assignee) prefilledContent += `assignee: ${assignee}\n`
+        if (dueDate) prefilledContent += `dueDate: ${dueDate}\n`
+        prefilledContent += '---\n\n'
+      }
+
+      setEditorContent(prefilledContent)
+
+      // Add a system message about editing existing card
+      if (cardId) {
+        const systemMessage: AIMessage = {
+          id: 'system-edit-context',
+          role: 'assistant',
+          content: `I'm ready to help you refine this existing user story. You can ask me to:\n\n- Improve the acceptance criteria\n- Add more details or context\n- Refine the story format\n- Suggest additional test cases\n- Help with implementation notes\n\nWhat would you like to work on?`,
+          timestamp: new Date(),
+        }
+        setMessages([systemMessage])
+      }
+    } else {
+      // Load from localStorage if no URL params
+      const savedMessages = localStorage.getItem('co-creator-messages')
+      const savedContent = localStorage.getItem('co-creator-content')
+
+      if (savedMessages) {
+        try {
+          setMessages(JSON.parse(savedMessages))
+        } catch (error) {
+          console.error('Failed to parse saved messages:', error)
+        }
+      }
+
+      if (savedContent) {
+        setEditorContent(savedContent)
       }
     }
-
-    if (savedContent) {
-      setEditorContent(savedContent)
-    }
-  }, [])
+  }, [searchParams])
 
   // Save conversation to localStorage whenever it changes
   useEffect(() => {
@@ -122,16 +172,24 @@ export function CoCreator() {
     }
 
     try {
-      const card = await createCard(
-        'AI Generated User Story',
-        'backlog',
-        editorContent
-      )
-      // Update metadata after creation
-      card.metadata.tags = ['ai-generated', 'user-story']
+      if (editingCardId) {
+        // Update existing card
+        await updateCardInStore(editingCardId, { content: editorContent })
+        toast.success('User story updated!')
+      } else {
+        // Create new card
+        const card = await createCard(
+          'AI Generated User Story',
+          'backlog',
+          editorContent
+        )
+        // Update metadata after creation
+        card.metadata.tags = ['ai-generated', 'user-story']
+        toast.success('User story exported to backlog!')
+      }
 
-      toast.success('User story exported to backlog!')
       setEditorContent('')
+      setEditingCardId(null)
     } catch (error) {
       console.error('Error exporting to card:', error)
       toast.error('Failed to export user story')
@@ -164,13 +222,13 @@ export function CoCreator() {
               <div className="h-full flex flex-col">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                    User Story Editor
+                    {editingCardId ? 'Edit User Story' : 'User Story Editor'}
                   </h2>
                   <button
                     onClick={handleExportToCard}
                     className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
-                    Export to Backlog
+                    {editingCardId ? 'Update Card' : 'Export to Backlog'}
                   </button>
                 </div>
                 <div className="flex-1">

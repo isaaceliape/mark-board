@@ -2,6 +2,7 @@ import { Card as CardType } from '../types'
 import { useState } from 'react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
+import { useNavigate } from 'react-router-dom'
 
 interface CardProps {
   card: CardType
@@ -11,6 +12,7 @@ interface CardProps {
 
 export function Card({ card, onEdit, onDelete }: CardProps) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const navigate = useNavigate()
 
   const {
     attributes,
@@ -44,13 +46,27 @@ export function Card({ card, onEdit, onDelete }: CardProps) {
     })
   }
 
+  const handleCoCreate = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    // Navigate to co-create page with card data as URL params
+    const params = new URLSearchParams({
+      cardId: card.id,
+      title: card.title,
+      content: card.content || '',
+      tags: card.metadata.tags?.join(',') || '',
+      assignee: card.metadata.assignee || '',
+      dueDate: card.metadata.dueDate ? card.metadata.dueDate.toISOString() : '',
+    })
+    navigate(`/co-create?${params.toString()}`)
+  }
+
   return (
     <div
       ref={setNodeRef}
       style={style}
       {...attributes}
       {...listeners}
-      className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 hover:shadow-md transition-shadow cursor-pointer"
+      className="group bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 hover:shadow-md transition-shadow cursor-pointer relative"
     >
       <div className="flex justify-between items-start mb-2">
         <h3
@@ -114,6 +130,16 @@ export function Card({ card, onEdit, onDelete }: CardProps) {
           </span>
         )}
       </div>
+
+      {/* Co-create icon - bottom right corner, visible on hover */}
+      <button
+        onClick={handleCoCreate}
+        className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-gray-400 hover:text-blue-500 dark:text-gray-500 dark:hover:text-blue-400 p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
+        title="Edit with AI in Co-Creator"
+        type="button"
+      >
+        🤖
+      </button>
     </div>
   )
 }

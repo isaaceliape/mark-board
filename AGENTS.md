@@ -1,5 +1,9 @@
 # Agent Guidelines for Mark Board
 
+## Project Terminology
+
+- **US/us**: Abbreviation for "user story" (e.g., "implement US 6.4", "US co-create integration")
+
 ## Build/Lint/Test Commands
 
 **Always use Bun, never npm.**
