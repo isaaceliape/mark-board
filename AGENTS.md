@@ -4,6 +4,17 @@
 
 - **US/us**: Abbreviation for "user story" (e.g., "implement US 6.4", "US co-create integration")
 
+## User Story Workflow
+
+When asked to implement a user story (US):
+
+1. **Move US to "in progress"**: Before starting implementation, move the user story file from `kanban-data/backlog/` to `kanban-data/in-progress/`
+2. **Implement the feature**: Follow all acceptance criteria and requirements
+3. **Move US to "done"**: After successful implementation and testing, move the user story file from `kanban-data/in-progress/` to `kanban-data/done/`
+4. **Commit changes**: Create comprehensive commit messages including the US reference
+
+This ensures proper kanban workflow tracking and maintains the project organization.
+
 ## Build/Lint/Test Commands
 
 **Always use Bun, never npm.**
