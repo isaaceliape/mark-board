@@ -131,7 +131,6 @@ export function Card({ card, onEdit, onDelete }: CardProps) {
         )}
       </div>
 
-      {/* Co-create icon - bottom right corner, always visible */}
       <button
         onClick={handleCoCreate}
         className="absolute bottom-2 right-2 text-gray-400 hover:text-blue-500 dark:text-gray-500 dark:hover:text-blue-400 p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
