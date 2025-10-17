@@ -8,6 +8,30 @@
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      // Apply theme as early as possible to avoid FOUC
+      ;(function () {
+        try {
+          const stored = localStorage.getItem('theme')
+          if (stored === 'light' || stored === 'dark') {
+            // User has manually set a preference, use it
+            if (stored === 'dark') {
+              document.documentElement.classList.add('dark')
+            }
+          } else {
+            // No manual preference, use system preference
+            const prefersDark =
+              window.matchMedia &&
+              window.matchMedia('(prefers-color-scheme: dark)').matches
+            if (prefersDark) {
+              document.documentElement.classList.add('dark')
+            }
+          }
+        } catch (e) {
+          // Fallback to light theme if anything goes wrong
+        }
+      })()
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

@@ -10,8 +10,41 @@ function getInitialTheme(): 'light' | 'dark' {
   return prefersDark ? 'dark' : 'light'
 }
 
+function hasManualOverride(): boolean {
+  if (typeof window === 'undefined') return false
+  const stored = window.localStorage.getItem('theme')
+  return stored === 'light' || stored === 'dark'
+}
+
 export function ThemeToggle() {
   const [theme, setTheme] = useState<'light' | 'dark'>(getInitialTheme())
+  const [hasManualPreference, setHasManualPreference] =
+    useState<boolean>(hasManualOverride())
+
+  // Listen for system preference changes
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+
+    const handleChange = (e: MediaQueryListEvent) => {
+      // Only auto-switch if user hasn't manually set a preference
+      if (!hasManualPreference) {
+        const newTheme = e.matches ? 'dark' : 'light'
+        setTheme(newTheme)
+      }
+    }
+
+    // Modern browsers support addEventListener
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener('change', handleChange)
+      return () => mediaQuery.removeEventListener('change', handleChange)
+    } else {
+      // Fallback for older browsers
+      mediaQuery.addListener(handleChange)
+      return () => mediaQuery.removeListener(handleChange)
+    }
+  }, [hasManualPreference])
 
   useEffect(() => {
     const root = document.documentElement
@@ -20,10 +53,16 @@ export function ThemeToggle() {
     } else {
       root.classList.remove('dark')
     }
-    window.localStorage.setItem('theme', theme)
   }, [theme])
 
-  const toggle = () => setTheme(prev => (prev === 'dark' ? 'light' : 'dark'))
+  const toggle = () => {
+    setHasManualPreference(true) // Mark that user has manually set preference
+    setTheme(prev => {
+      const newTheme = prev === 'dark' ? 'light' : 'dark'
+      window.localStorage.setItem('theme', newTheme)
+      return newTheme
+    })
+  }
 
   return (
     <button

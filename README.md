@@ -72,6 +72,10 @@ Mark Board includes powerful AI-assisted features for creating and refining user
 
 Set your OpenAI API key as `VITE_OPENAI_API_KEY` for AI features. If unset, the app runs in mock mode for demonstration.
 
+### 🎨 Theme Behavior
+
+Mark Board automatically detects and follows your system's light/dark preference on first visit. The theme will also update live when you change your OS preference, unless you've manually toggled the theme. Manual theme choices are saved and take precedence over system settings.
+
 ## Project Structure
 
 ```
