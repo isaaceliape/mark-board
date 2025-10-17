@@ -23,6 +23,7 @@ interface ColumnProps {
     }
   ) => void
   onDeleteCard: (cardId: string) => void
+  onOpenEditModal?: (cardId: string) => void
 }
 
 export const Column = ({
@@ -32,6 +33,7 @@ export const Column = ({
   onAddCard,
   onEditCard,
   onDeleteCard,
+  onOpenEditModal,
 }: ColumnProps) => {
   const [isAdding, setIsAdding] = useState(false)
   const [editingCardId, setEditingCardId] = useState<string | null>(null)
@@ -95,7 +97,7 @@ export const Column = ({
               <Card
                 key={card.id}
                 card={card}
-                onEdit={() => setEditingCardId(card.id)}
+                onEdit={() => onOpenEditModal && onOpenEditModal(card.id)}
                 onDelete={() => onDeleteCard(card.id)}
               />
             )

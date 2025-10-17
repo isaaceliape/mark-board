@@ -55,7 +55,10 @@ export function Card({ card, onEdit, onDelete }: CardProps) {
       <div className="flex justify-between items-start mb-2">
         <h3
           className="font-medium text-gray-900 dark:text-gray-100 flex-1 cursor-pointer"
-          onClick={onEdit}
+          onClick={e => {
+            e.stopPropagation()
+            onEdit()
+          }}
         >
           {card.title}
         </h3>
@@ -76,7 +79,10 @@ export function Card({ card, onEdit, onDelete }: CardProps) {
       {card.content && (
         <p
           className="text-sm text-gray-600 dark:text-gray-300 mb-3 line-clamp-3 cursor-pointer"
-          onClick={onEdit}
+          onClick={e => {
+            e.stopPropagation()
+            onEdit()
+          }}
         >
           {card.content}
         </p>

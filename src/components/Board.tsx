@@ -12,6 +12,7 @@ import { useState } from 'react'
 import { Card as CardType } from '../types'
 import { Column } from './Column'
 import { Card } from './Card'
+import { CardEditor } from './CardEditor'
 import { useBoardStore } from '../stores/boardStore'
 import { fsAPI } from '../utils/fileOperations'
 import {
@@ -32,6 +33,7 @@ export const Board = () => {
     setError,
   } = useBoardStore()
   const [activeCard, setActiveCard] = useState<CardType | null>(null)
+  const [editingCard, setEditingCard] = useState<CardType | null>(null)
   const [fsInitialized, setFsInitialized] = useState(false)
 
   const sensors = useSensors(
@@ -121,6 +123,14 @@ export const Board = () => {
         updated: new Date(),
       },
     })
+    setEditingCard(null)
+  }
+
+  const handleOpenEditModal = (cardId: string) => {
+    const card = columns.flatMap(col => col.cards).find(c => c.id === cardId)
+    if (card) {
+      setEditingCard(card)
+    }
   }
 
   const handleSelectDirectory = async () => {
@@ -183,6 +193,7 @@ export const Board = () => {
             onAddCard={data => handleAddCard(column.id, data)}
             onEditCard={handleEditCard}
             onDeleteCard={deleteCard}
+            onOpenEditModal={handleOpenEditModal}
           />
         ))}
       </div>
@@ -192,6 +203,20 @@ export const Board = () => {
           <Card card={activeCard} onEdit={() => {}} onDelete={() => {}} />
         ) : null}
       </DragOverlay>
+
+      {editingCard && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <CardEditor
+                card={editingCard}
+                onSave={data => handleEditCard(editingCard.id, data)}
+                onCancel={() => setEditingCard(null)}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </DndContext>
   )
 }

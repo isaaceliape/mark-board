@@ -15,4 +15,3 @@ Initialize the project with React, TypeScript, and all necessary dependencies.
 - [x] Create Vite project
 - [x] Install dependencies
 - [x] Configure Tailwind CSS
-- [ ] Set up file watching

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Card, CardMetadata } from '../types'
 
 interface CardEditorProps {
@@ -21,6 +21,32 @@ export const CardEditor = ({ card, onSave, onCancel }: CardEditorProps) => {
       ? new Date(card.metadata.dueDate).toISOString().split('T')[0]
       : ''
   )
+  const editorRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        editorRef.current &&
+        !editorRef.current.contains(event.target as Node)
+      ) {
+        onCancel()
+      }
+    }
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onCancel()
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    document.addEventListener('keydown', handleEscape)
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener('keydown', handleEscape)
+    }
+  }, [onCancel])
 
   const handleSave = () => {
     if (!title.trim()) {
@@ -41,7 +67,10 @@ export const CardEditor = ({ card, onSave, onCancel }: CardEditorProps) => {
   }
 
   return (
-    <div className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg p-4 space-y-4">
+    <div
+      ref={editorRef}
+      className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg p-4 space-y-4"
+    >
       <div>
         <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
           Title
@@ -112,7 +141,7 @@ export const CardEditor = ({ card, onSave, onCancel }: CardEditorProps) => {
           onClick={handleSave}
           className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
-          {card ? 'Save Changes' : 'Create Card'}
+          {card ? 'Save' : 'create Card'}
         </button>
         <button
           onClick={onCancel}
