@@ -1,25 +1,25 @@
 import { useEffect, useState } from 'react'
 
-function getInitialTheme(): 'light' | 'dark' {
+function getStoredTheme(): 'light' | 'dark' | null {
+  if (typeof window === 'undefined') return null
+  const stored = window.localStorage.getItem('theme')
+  return stored === 'light' || stored === 'dark' ? stored : null
+}
+
+function getSystemTheme(): 'light' | 'dark' {
   if (typeof window === 'undefined') return 'light'
-  const stored = window.localStorage.getItem('theme') as 'light' | 'dark' | null
-  if (stored === 'light' || stored === 'dark') return stored
   const prefersDark =
     window.matchMedia &&
     window.matchMedia('(prefers-color-scheme: dark)').matches
   return prefersDark ? 'dark' : 'light'
 }
 
-function hasManualOverride(): boolean {
-  if (typeof window === 'undefined') return false
-  const stored = window.localStorage.getItem('theme')
-  return stored === 'light' || stored === 'dark'
-}
-
 export function ThemeToggle() {
-  const [theme, setTheme] = useState<'light' | 'dark'>(getInitialTheme())
-  const [hasManualPreference, setHasManualPreference] =
-    useState<boolean>(hasManualOverride())
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    // Get theme from localStorage first, then system preference
+    const stored = getStoredTheme()
+    return stored || getSystemTheme()
+  })
 
   // Listen for system preference changes
   useEffect(() => {
@@ -29,7 +29,8 @@ export function ThemeToggle() {
 
     const handleChange = (e: MediaQueryListEvent) => {
       // Only auto-switch if user hasn't manually set a preference
-      if (!hasManualPreference) {
+      const stored = getStoredTheme()
+      if (!stored) {
         const newTheme = e.matches ? 'dark' : 'light'
         setTheme(newTheme)
       }
@@ -44,7 +45,7 @@ export function ThemeToggle() {
       mediaQuery.addListener(handleChange)
       return () => mediaQuery.removeListener(handleChange)
     }
-  }, [hasManualPreference])
+  }, [])
 
   useEffect(() => {
     const root = document.documentElement
@@ -56,9 +57,9 @@ export function ThemeToggle() {
   }, [theme])
 
   const toggle = () => {
-    setHasManualPreference(true) // Mark that user has manually set preference
     setTheme(prev => {
       const newTheme = prev === 'dark' ? 'light' : 'dark'
+      // Save manual preference to localStorage
       window.localStorage.setItem('theme', newTheme)
       return newTheme
     })
