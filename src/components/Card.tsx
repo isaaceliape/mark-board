@@ -66,7 +66,7 @@ export function Card({ card, onEdit, onDelete }: CardProps) {
       style={style}
       {...attributes}
       {...listeners}
-      className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 hover:shadow-md transition-shadow cursor-pointer"
+      className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 hover:shadow-md transition-shadow cursor-pointer relative"
     >
       <div className="flex justify-between items-start mb-2">
         <h3
