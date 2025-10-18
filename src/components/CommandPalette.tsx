@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { Card as CardType } from '../types'
 
 interface CommandPaletteProps {
@@ -25,6 +25,7 @@ export const CommandPalette = ({
   const [selectedIndex, setSelectedIndex] = useState(0)
   const [showingStoryList, setShowingStoryList] = useState(false)
   const [storySelectedIndex, setStorySelectedIndex] = useState(0)
+  const itemRefs = useRef<(HTMLButtonElement | null)[]>([])
 
   const commands = [
     { label: 'Create new card', action: onCreateCard, enabled: true },
@@ -113,7 +114,18 @@ export const CommandPalette = ({
     setSelectedIndex(0)
     setShowingStoryList(false)
     setStorySelectedIndex(0)
+    itemRefs.current = []
   }, [isOpen])
+
+  // Scroll selected item into view
+  useEffect(() => {
+    if (showingStoryList && itemRefs.current[storySelectedIndex]) {
+      itemRefs.current[storySelectedIndex]?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+      })
+    }
+  }, [storySelectedIndex, showingStoryList])
 
   if (!isOpen) return null
 
@@ -130,6 +142,7 @@ export const CommandPalette = ({
                 {allCards.map((card, index) => (
                   <button
                     key={card.id}
+                    ref={el => (itemRefs.current[index] = el)}
                     onClick={() => {
                       onSelectCard(card.id)
                       onClose()
