@@ -6,7 +6,7 @@ export const SearchFilter = () => {
   const cards = columns.flatMap(col => col.cards)
   const [search, setSearch] = useState('')
   const [selectedTags, setSelectedTags] = useState<string[]>([])
-  const [selectedAssignee, setSelectedAssignee] = useState('')
+  const [selectedAssignees, setSelectedAssignees] = useState<string[]>([])
 
   // Get unique tags and assignees from all cards
   const allTags = Array.from(
@@ -14,7 +14,11 @@ export const SearchFilter = () => {
   ).sort()
 
   const allAssignees = Array.from(
-    new Set(cards.map(card => card.metadata.assignee).filter(Boolean))
+    new Set(
+      cards
+        .map(card => card.metadata.assignee)
+        .filter((assignee): assignee is string => Boolean(assignee))
+    )
   ).sort()
 
   // Update filters when any filter changes
@@ -22,9 +26,9 @@ export const SearchFilter = () => {
     setFilters({
       search,
       tags: selectedTags,
-      assignee: selectedAssignee,
+      assignees: selectedAssignees,
     })
-  }, [search, selectedTags, selectedAssignee, setFilters])
+  }, [search, selectedTags, selectedAssignees, setFilters])
 
   const handleAddTag = (tag: string) => {
     if (tag && !selectedTags.includes(tag)) {
@@ -36,13 +40,24 @@ export const SearchFilter = () => {
     setSelectedTags(prev => prev.filter(t => t !== tag))
   }
 
+  const handleAddAssignee = (assignee: string) => {
+    if (assignee && !selectedAssignees.includes(assignee)) {
+      setSelectedAssignees(prev => [...prev, assignee])
+    }
+  }
+
+  const handleRemoveAssignee = (assignee: string) => {
+    setSelectedAssignees(prev => prev.filter(a => a !== assignee))
+  }
+
   const clearFilters = () => {
     setSearch('')
     setSelectedTags([])
-    setSelectedAssignee('')
+    setSelectedAssignees([])
   }
 
-  const hasActiveFilters = search || selectedTags.length > 0 || selectedAssignee
+  const hasActiveFilters =
+    search || selectedTags.length > 0 || selectedAssignees.length > 0
 
   return (
     <>
@@ -91,16 +106,18 @@ export const SearchFilter = () => {
         {allAssignees.length > 0 && (
           <div className="relative">
             <select
-              value={selectedAssignee}
-              onChange={e => setSelectedAssignee(e.target.value)}
+              value=""
+              onChange={e => handleAddAssignee(e.target.value || '')}
               className="appearance-none bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 pr-8 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent min-w-32"
             >
-              <option value="">All assignees</option>
-              {allAssignees.map(assignee => (
-                <option key={assignee} value={assignee}>
-                  {assignee}
-                </option>
-              ))}
+              <option value="">Add assignee filter</option>
+              {allAssignees
+                .filter(assignee => !selectedAssignees.includes(assignee))
+                .map(assignee => (
+                  <option key={assignee} value={assignee}>
+                    {assignee}
+                  </option>
+                ))}
             </select>
           </div>
         )}
@@ -116,17 +133,29 @@ export const SearchFilter = () => {
         )}
       </div>
 
-      {/* Selected Tags Display */}
-      {selectedTags.length > 0 && (
+      {/* Selected Filters Display */}
+      {(selectedTags.length > 0 || selectedAssignees.length > 0) && (
         <div className="flex flex-wrap gap-2 mt-2">
           {selectedTags.map(tag => (
             <button
-              key={tag}
+              key={`tag-${tag}`}
               onClick={() => handleRemoveTag(tag)}
               className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors"
             >
               {tag}
               <span className="ml-2 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200">
+                ×
+              </span>
+            </button>
+          ))}
+          {selectedAssignees.map(assignee => (
+            <button
+              key={`assignee-${assignee}`}
+              onClick={() => handleRemoveAssignee(assignee)}
+              className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 hover:bg-green-200 dark:hover:bg-green-800 transition-colors"
+            >
+              {assignee}
+              <span className="ml-2 text-green-600 dark:text-green-400 hover:text-green-800 dark:hover:text-green-200">
                 ×
               </span>
             </button>

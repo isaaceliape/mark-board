@@ -59,9 +59,12 @@ export const Board = () => {
         }
       }
 
-      // Assignee filter
-      if (filters.assignee) {
-        if (card.metadata.assignee !== filters.assignee) {
+      // Assignees filter
+      if (filters.assignees.length > 0) {
+        if (
+          !card.metadata.assignee ||
+          !filters.assignees.includes(card.metadata.assignee)
+        ) {
           return false
         }
       }

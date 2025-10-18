@@ -11,7 +11,7 @@ import {
 export interface SearchFilters {
   search: string
   tags: string[]
-  assignee: string
+  assignees: string[]
 }
 
 interface BoardState {
@@ -54,7 +54,7 @@ export const useBoardStore = create<BoardState>((set, get) => ({
   filters: {
     search: '',
     tags: [],
-    assignee: '',
+    assignees: [],
   },
 
   loadCards: async () => {
