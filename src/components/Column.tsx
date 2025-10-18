@@ -11,11 +11,7 @@ interface ColumnProps {
   title: string
   cards: CardType[]
   selectedCardId?: string | null
-  onAddCard: (data: {
-    title: string
-    content: string
-    metadata: Partial<CardType['metadata']>
-  }) => void
+  onOpenCreateModal: (columnId: string) => void
   onEditCard: (
     cardId: string,
     data: {
@@ -33,24 +29,14 @@ export const Column = React.memo(function Column({
   title,
   cards,
   selectedCardId,
-  onAddCard,
+  onOpenCreateModal,
   onEditCard,
   onDeleteCard,
   onOpenEditModal,
 }: ColumnProps) {
-  const [isAdding, setIsAdding] = useState(false)
   const [editingCardId, setEditingCardId] = useState<string | null>(null)
 
   const { setNodeRef, isOver } = useDroppable({ id })
-
-  const handleAddCard = (data: {
-    title: string
-    content: string
-    metadata: Partial<CardType['metadata']>
-  }) => {
-    onAddCard(data)
-    setIsAdding(false)
-  }
 
   const handleEditCard = (data: {
     title: string
@@ -107,24 +93,15 @@ export const Column = React.memo(function Column({
             )
           )}
         </SortableContext>
-
-        {isAdding && (
-          <CardEditor
-            onSave={handleAddCard}
-            onCancel={() => setIsAdding(false)}
-          />
-        )}
       </div>
 
       <div className="px-4 py-3 border-t dark:bg-gray-700 border-gray-200 bg-white rounded-b-lg">
-        {!isAdding && (
-          <button
-            onClick={() => setIsAdding(true)}
-            className="w-full px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-700 dark:bg-gray-800 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            + New Card
-          </button>
-        )}
+        <button
+          onClick={() => onOpenCreateModal(id)}
+          className="w-full px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-700 dark:bg-gray-800 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          + New Card
+        </button>
       </div>
     </div>
   )

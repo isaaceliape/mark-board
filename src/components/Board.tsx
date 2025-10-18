@@ -38,6 +38,9 @@ export const Board = () => {
   } = useBoardStore()
   const [activeCard, setActiveCard] = useState<CardType | null>(null)
   const [editingCard, setEditingCard] = useState<CardType | null>(null)
+  const [creatingCard, setCreatingCard] = useState<{ columnId: string } | null>(
+    null
+  )
   const [fsInitialized, setFsInitialized] = useState(false)
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false)
 
@@ -198,6 +201,10 @@ export const Board = () => {
     [columns]
   )
 
+  const handleOpenCreateModal = useCallback((columnId: string) => {
+    setCreatingCard({ columnId })
+  }, [])
+
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -331,7 +338,7 @@ export const Board = () => {
             title={column.title}
             cards={column.cards}
             selectedCardId={selectedCardId}
-            onAddCard={data => handleAddCard(column.id, data)}
+            onOpenCreateModal={handleOpenCreateModal}
             onEditCard={handleEditCard}
             onDeleteCard={deleteCard}
             onOpenEditModal={handleOpenEditModal}
@@ -353,6 +360,22 @@ export const Board = () => {
                 card={editingCard}
                 onSave={data => handleEditCard(editingCard.id, data)}
                 onCancel={() => setEditingCard(null)}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {creatingCard && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <CardEditor
+                onSave={data => {
+                  handleAddCard(creatingCard.columnId, data)
+                  setCreatingCard(null)
+                }}
+                onCancel={() => setCreatingCard(null)}
               />
             </div>
           </div>
