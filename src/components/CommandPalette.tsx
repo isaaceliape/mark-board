@@ -39,7 +39,7 @@ export const CommandPalette = ({
       enabled: hasSelectedCard,
     },
     {
-      label: 'Open user story',
+      label: 'Open card',
       action: () => setShowingStoryList(true),
       enabled: true,
     },
@@ -86,7 +86,7 @@ export const CommandPalette = ({
         } else if (event.key === 'Enter') {
           event.preventDefault()
           const command = commands[selectedIndex]
-          if (command.label === 'Open user story') {
+          if (command.label === 'Open card') {
             command.action()
           } else {
             command.action()
@@ -122,7 +122,7 @@ export const CommandPalette = ({
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full mx-4 max-h-[80vh] overflow-hidden">
         <div className="p-4">
           <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">
-            {showingStoryList ? 'Select User Story' : 'Command Palette'}
+            {showingStoryList ? 'Select Card' : 'Command Palette'}
           </div>
           {showingStoryList ? (
             <div className="max-h-96 overflow-y-auto">
@@ -154,7 +154,7 @@ export const CommandPalette = ({
                 <button
                   key={index}
                   onClick={() => {
-                    if (command.label === 'Open user story') {
+                    if (command.label === 'Open card') {
                       command.action()
                     } else {
                       command.action()
