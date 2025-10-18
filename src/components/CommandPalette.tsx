@@ -10,6 +10,7 @@ interface CommandPaletteProps {
   hasSelectedCard: boolean
   allCards: CardType[]
   onSelectCard: (cardId: string) => void
+  onDeleteAnyCard: (cardId: string) => void
 }
 
 export const CommandPalette = ({
@@ -21,9 +22,11 @@ export const CommandPalette = ({
   hasSelectedCard,
   allCards,
   onSelectCard,
+  onDeleteAnyCard,
 }: CommandPaletteProps) => {
   const [selectedIndex, setSelectedIndex] = useState(0)
   const [showingStoryList, setShowingStoryList] = useState(false)
+  const [deleteMode, setDeleteMode] = useState(false)
   const [storySelectedIndex, setStorySelectedIndex] = useState(0)
   const itemRefs = useRef<(HTMLButtonElement | null)[]>([])
 
@@ -33,6 +36,7 @@ export const CommandPalette = ({
       action: () => setShowingStoryList(true),
       enabled: true,
     },
+    { label: 'Delete card', action: () => setDeleteMode(true), enabled: true },
     { label: 'Create new card', action: onCreateCard, enabled: true },
     {
       label: 'Edit selected card',
@@ -50,9 +54,10 @@ export const CommandPalette = ({
     if (!isOpen) return
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (showingStoryList) {
+      if (showingStoryList || deleteMode) {
         if (event.key === 'Escape') {
           setShowingStoryList(false)
+          setDeleteMode(false)
           setStorySelectedIndex(0)
           return
         }
@@ -67,8 +72,19 @@ export const CommandPalette = ({
           )
         } else if (event.key === 'Enter') {
           event.preventDefault()
-          onSelectCard(allCards[storySelectedIndex].id)
-          onClose()
+          if (deleteMode) {
+            if (
+              window.confirm(
+                `Are you sure you want to delete "${allCards[storySelectedIndex].title}"?`
+              )
+            ) {
+              onDeleteAnyCard(allCards[storySelectedIndex].id)
+              onClose()
+            }
+          } else {
+            onSelectCard(allCards[storySelectedIndex].id)
+            onClose()
+          }
         }
       } else {
         if (event.key === 'Escape') {
@@ -105,14 +121,17 @@ export const CommandPalette = ({
     commands,
     onClose,
     showingStoryList,
+    deleteMode,
     storySelectedIndex,
     allCards,
     onSelectCard,
+    onDeleteAnyCard,
   ])
 
   useEffect(() => {
     setSelectedIndex(0)
     setShowingStoryList(false)
+    setDeleteMode(false)
     setStorySelectedIndex(0)
     itemRefs.current = []
   }, [isOpen])
@@ -125,7 +144,7 @@ export const CommandPalette = ({
         block: 'nearest',
       })
     }
-  }, [storySelectedIndex, showingStoryList])
+  }, [storySelectedIndex, showingStoryList, deleteMode])
 
   if (!isOpen) return null
 
@@ -134,9 +153,13 @@ export const CommandPalette = ({
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full mx-4 max-h-[80vh] overflow-hidden">
         <div className="p-4">
           <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">
-            {showingStoryList ? 'Select Card' : 'Command Palette'}
+            {showingStoryList
+              ? 'Select Card'
+              : deleteMode
+                ? 'Select Card to Delete'
+                : 'Command Palette'}
           </div>
-          {showingStoryList ? (
+          {showingStoryList || deleteMode ? (
             <div className="max-h-96 overflow-y-auto">
               <div className="space-y-1">
                 {allCards.map((card, index) => (
@@ -144,8 +167,19 @@ export const CommandPalette = ({
                     key={card.id}
                     ref={el => (itemRefs.current[index] = el)}
                     onClick={() => {
-                      onSelectCard(card.id)
-                      onClose()
+                      if (deleteMode) {
+                        if (
+                          window.confirm(
+                            `Are you sure you want to delete "${card.title}"?`
+                          )
+                        ) {
+                          onDeleteAnyCard(card.id)
+                          onClose()
+                        }
+                      } else {
+                        onSelectCard(card.id)
+                        onClose()
+                      }
                     }}
                     className={`w-full text-left px-3 py-2 rounded-md transition-colors ${
                       index === storySelectedIndex
@@ -186,7 +220,7 @@ export const CommandPalette = ({
             </div>
           )}
           <div className="text-xs text-gray-400 dark:text-gray-500 mt-3">
-            {showingStoryList
+            {showingStoryList || deleteMode
               ? 'Use ↑↓ to navigate, Enter to select, Esc to go back'
               : 'Use ↑↓ to navigate, Enter to select, Esc to close'}
           </div>
