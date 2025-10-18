@@ -28,6 +28,11 @@ export const CommandPalette = ({
   const itemRefs = useRef<(HTMLButtonElement | null)[]>([])
 
   const commands = [
+    {
+      label: 'Open card',
+      action: () => setShowingStoryList(true),
+      enabled: true,
+    },
     { label: 'Create new card', action: onCreateCard, enabled: true },
     {
       label: 'Edit selected card',
@@ -38,11 +43,6 @@ export const CommandPalette = ({
       label: 'Delete selected card',
       action: onDeleteCard,
       enabled: hasSelectedCard,
-    },
-    {
-      label: 'Open card',
-      action: () => setShowingStoryList(true),
-      enabled: true,
     },
   ].filter(cmd => cmd.enabled)
 
