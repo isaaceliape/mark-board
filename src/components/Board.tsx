@@ -399,6 +399,8 @@ export const Board = () => {
           }
         }}
         hasSelectedCard={!!selectedCardId}
+        allCards={filteredColumns.flatMap(col => col.cards)}
+        onSelectCard={handleOpenEditModal}
       />
     </DndContext>
   )
