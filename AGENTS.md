@@ -31,11 +31,11 @@ These commands MUST pass with 0 errors/warnings before any commit. If they fail,
 
 - **Build**: `bun run build` (TypeScript compilation + Vite build)
 - **Lint**: `bun run lint` (ESLint with React/TypeScript rules, 0 warnings allowed)
-- **Test all**: `bun test` (Vitest with jsdom environment)
-- **Test single file**: `bun test -- src/components/Card.test.tsx`
-- **Test single spec**: `bun test -- --testNamePattern="renders card with all metadata"`
-- **Test watch**: `bun run test:watch`
-- **Test coverage**: `bun run test:coverage`
+- **Test all**: `bun test` (Bun's built-in test runner)
+- **Test single file**: `bun test src/utils/fileOperations.test.ts`
+- **Test single spec**: `bun test --testNamePattern="renders card with all metadata"`
+- **Test watch**: `bun test --watch`
+- **Test coverage**: `bun test --coverage`
 - **Format**: `bun run format:fix` (Prettier with project config)
 - **Dev server**: `bun run dev` (NEVER run this command as an agent - it's for user development)
 
@@ -88,9 +88,9 @@ These commands MUST pass with 0 errors/warnings before any commit. If they fail,
 
 ### Testing
 
-- Jest with React Testing Library
+- Bun's built-in test runner with React Testing Library
 - Component tests in `__tests__/` directories
-- Mock external dependencies (e.g., `@dnd-kit`)
+- Utility and store tests working; React component tests need mocking adjustments
 - Descriptive test names and assertions
 
 ### File Operations

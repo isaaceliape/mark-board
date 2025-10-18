@@ -1,6 +1,5 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { ThemeToggle } from '../ThemeToggle'
-import { vi } from 'vitest'
 
 describe('ThemeToggle', () => {
   it('renders without crashing', () => {
@@ -8,11 +7,11 @@ describe('ThemeToggle', () => {
       matches: false, // light mode
       media: '(prefers-color-scheme: dark)',
       onchange: null,
-      addListener: vi.fn(),
-      removeListener: vi.fn(),
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      dispatchEvent: vi.fn(),
+      addListener: jest.fn(),
+      removeListener: jest.fn(),
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+      dispatchEvent: jest.fn(),
     })
     render(<ThemeToggle />)
     expect(screen.getByRole('button')).toBeInTheDocument()
@@ -23,11 +22,11 @@ describe('ThemeToggle', () => {
       matches: true, // dark mode
       media: '(prefers-color-scheme: dark)',
       onchange: null,
-      addListener: vi.fn(),
-      removeListener: vi.fn(),
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      dispatchEvent: vi.fn(),
+      addListener: jest.fn(),
+      removeListener: jest.fn(),
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+      dispatchEvent: jest.fn(),
     })
     render(<ThemeToggle />)
 
@@ -41,11 +40,11 @@ describe('ThemeToggle', () => {
       matches: true, // system prefers dark
       media: '(prefers-color-scheme: dark)',
       onchange: null,
-      addListener: vi.fn(),
-      removeListener: vi.fn(),
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      dispatchEvent: vi.fn(),
+      addListener: jest.fn(),
+      removeListener: jest.fn(),
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+      dispatchEvent: jest.fn(),
     })
     render(<ThemeToggle />)
 
@@ -60,11 +59,11 @@ describe('ThemeToggle', () => {
       matches: false, // light mode
       media: '(prefers-color-scheme: dark)',
       onchange: null,
-      addListener: vi.fn(),
-      removeListener: vi.fn(),
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      dispatchEvent: vi.fn(),
+      addListener: jest.fn(),
+      removeListener: jest.fn(),
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+      dispatchEvent: jest.fn(),
     })
     render(<ThemeToggle />)
 
@@ -81,11 +80,11 @@ describe('ThemeToggle', () => {
       matches: false, // light mode
       media: '(prefers-color-scheme: dark)',
       onchange: null,
-      addListener: vi.fn(),
-      removeListener: vi.fn(),
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      dispatchEvent: vi.fn(),
+      addListener: jest.fn(),
+      removeListener: jest.fn(),
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+      dispatchEvent: jest.fn(),
     })
     ;(document.querySelector as any).mockReturnValue(
       document.createElement('svg')
@@ -102,11 +101,11 @@ describe('ThemeToggle', () => {
       matches: true, // dark mode
       media: '(prefers-color-scheme: dark)',
       onchange: null,
-      addListener: vi.fn(),
-      removeListener: vi.fn(),
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      dispatchEvent: vi.fn(),
+      addListener: jest.fn(),
+      removeListener: jest.fn(),
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+      dispatchEvent: jest.fn(),
     })
     ;(document.querySelector as any).mockReturnValue(
       document.createElement('svg')
@@ -123,11 +122,11 @@ describe('ThemeToggle', () => {
       matches: false, // start with light
       media: '(prefers-color-scheme: dark)',
       onchange: null,
-      addListener: vi.fn(),
-      removeListener: vi.fn(),
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      dispatchEvent: vi.fn(),
+      addListener: jest.fn(),
+      removeListener: jest.fn(),
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+      dispatchEvent: jest.fn(),
     }
     ;(window.matchMedia as any).mockReturnValue(mockMediaQuery)
 
@@ -153,11 +152,11 @@ describe('ThemeToggle', () => {
       matches: false, // start with light
       media: '(prefers-color-scheme: dark)',
       onchange: null,
-      addListener: vi.fn(),
-      removeListener: vi.fn(),
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      dispatchEvent: vi.fn(),
+      addListener: jest.fn(),
+      removeListener: jest.fn(),
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+      dispatchEvent: jest.fn(),
     }
     ;(window.matchMedia as any).mockReturnValue(mockMediaQuery)
 

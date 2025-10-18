@@ -1,14 +1,3 @@
-import { vi } from 'vitest'
-
-// Mock the file operations module
-vi.mock('../../utils/fileOperations', () => ({
-  readAllCards: vi.fn(),
-  createCard: vi.fn(),
-  updateCard: vi.fn(),
-  deleteCard: vi.fn(),
-  moveCard: vi.fn(),
-}))
-
 import { useBoardStore } from '../boardStore'
 import * as fileOperations from '../../utils/fileOperations'
 
@@ -41,7 +30,7 @@ const mockCards = [
 describe('boardStore', () => {
   beforeEach(() => {
     // Reset all mocks before each test
-    vi.clearAllMocks()
+    jest.clearAllMocks()
 
     // Reset the store to initial state
     useBoardStore.setState({

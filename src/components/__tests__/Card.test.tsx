@@ -1,24 +1,23 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { Card } from '../Card'
 import { Card as CardType } from '../../types'
-import { vi } from 'vitest'
 
 // Mock @dnd-kit dependencies
-vi.mock('@dnd-kit/sortable', () => ({
-  useSortable: vi.fn(() => ({
+jest.mock('@dnd-kit/sortable', () => ({
+  useSortable: jest.fn(() => ({
     attributes: {},
     listeners: {},
-    setNodeRef: vi.fn(),
+    setNodeRef: jest.fn(),
     transform: null,
     transition: null,
     isDragging: false,
   })),
 }))
 
-vi.mock('@dnd-kit/utilities', () => ({
+jest.mock('@dnd-kit/utilities', () => ({
   CSS: {
     Transform: {
-      toString: vi.fn(() => ''),
+      toString: jest.fn(() => ''),
     },
   },
 }))
@@ -51,11 +50,11 @@ const mockCardMinimal: CardType = {
 }
 
 describe('Card', () => {
-  const mockOnEdit = vi.fn()
-  const mockOnDelete = vi.fn()
+  const mockOnEdit = jest.fn()
+  const mockOnDelete = jest.fn()
 
   beforeEach(() => {
-    vi.clearAllMocks()
+    jest.clearAllMocks()
   })
 
   it('renders card with all metadata', () => {

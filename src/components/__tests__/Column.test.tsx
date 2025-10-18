@@ -1,11 +1,10 @@
 import { render, screen, fireEvent } from '@testing-library/react'
 import { Column } from '../Column'
 import { Card as CardType } from '../../types'
-import { vi } from 'vitest'
 
 // Mock the Card component to avoid dnd-kit issues
-vi.mock('../Card', () => ({
-  Card: vi.fn(({ card, onEdit, onDelete }: any) => (
+jest.mock('../Card', () => ({
+  Card: jest.fn(({ card, onEdit, onDelete }: any) => (
     <div data-testid={`card-${card.id}`}>
       <h3>{card.title}</h3>
       <button onClick={onEdit} data-testid={`edit-${card.id}`}>
@@ -22,8 +21,8 @@ vi.mock('../Card', () => ({
 }))
 
 // Mock CardEditor component
-vi.mock('../CardEditor', () => ({
-  CardEditor: vi.fn(({ onSave, onCancel }: any) => (
+jest.mock('../CardEditor', () => ({
+  CardEditor: jest.fn(({ onSave, onCancel }: any) => (
     <div data-testid="card-editor">
       <button
         onClick={() => onSave({ title: 'New Card', content: '', metadata: {} })}
@@ -39,32 +38,32 @@ vi.mock('../CardEditor', () => ({
 }))
 
 // Mock @dnd-kit dependencies
-vi.mock('@dnd-kit/core', () => ({
-  useDroppable: vi.fn(() => ({
-    setNodeRef: vi.fn(),
+jest.mock('@dnd-kit/core', () => ({
+  useDroppable: jest.fn(() => ({
+    setNodeRef: jest.fn(),
     isOver: false,
   })),
 }))
 
-vi.mock('@dnd-kit/sortable', () => ({
-  SortableContext: vi.fn(({ children }: { children: React.ReactNode }) => (
+jest.mock('@dnd-kit/sortable', () => ({
+  SortableContext: jest.fn(({ children }: { children: React.ReactNode }) => (
     <div>{children}</div>
   )),
-  verticalListSortingStrategy: vi.fn(),
-  useSortable: vi.fn(() => ({
+  verticalListSortingStrategy: jest.fn(),
+  useSortable: jest.fn(() => ({
     attributes: {},
     listeners: {},
-    setNodeRef: vi.fn(),
+    setNodeRef: jest.fn(),
     transform: null,
     transition: null,
     isDragging: false,
   })),
 }))
 
-vi.mock('@dnd-kit/utilities', () => ({
+jest.mock('@dnd-kit/utilities', () => ({
   CSS: {
     Transform: {
-      toString: vi.fn(() => ''),
+      toString: jest.fn(() => ''),
     },
   },
 }))
@@ -95,13 +94,13 @@ const mockCards: CardType[] = [
 ]
 
 describe('Column', () => {
-  const mockOnAddCard = vi.fn()
-  const mockOnEditCard = vi.fn()
-  const mockOnDeleteCard = vi.fn()
-  const mockOnOpenEditModal = vi.fn()
+  const mockOnAddCard = jest.fn()
+  const mockOnEditCard = jest.fn()
+  const mockOnDeleteCard = jest.fn()
+  const mockOnOpenEditModal = jest.fn()
 
   beforeEach(() => {
-    vi.clearAllMocks()
+    jest.clearAllMocks()
   })
 
   it('renders column with title and card count', () => {
