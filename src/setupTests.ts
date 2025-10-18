@@ -1,37 +1,51 @@
 import '@testing-library/jest-dom'
+import { JSDOM } from 'jsdom'
 
 console.log('setupTests.ts is running')
 
-// Ensure window and document exist (Bun's test environment should provide them)
-if (typeof window === 'undefined') {
-  console.warn('window is undefined - test environment not set up properly')
-}
+// Set up JSDOM for React Testing Library
+const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>', {
+  url: 'http://localhost',
+})
 
-if (typeof document === 'undefined') {
-  console.warn('document is undefined - test environment not set up properly')
+;(globalThis as any).window = dom.window
+;(globalThis as any).document = dom.window.document
+;(globalThis as any).navigator = dom.window.navigator
+;(globalThis as any).HTMLElement = dom.window.HTMLElement
+;(globalThis as any).HTMLInputElement = dom.window.HTMLInputElement
+;(globalThis as any).HTMLButtonElement = dom.window.HTMLButtonElement
+;(globalThis as any).Event = dom.window.Event
+;(globalThis as any).MouseEvent = dom.window.MouseEvent
+;(globalThis as any).KeyboardEvent = dom.window.KeyboardEvent
+
+// Ensure document.body exists
+if (!document.body) {
+  document.body = document.createElement('body')
 }
 
 // Mock window.matchMedia for theme toggle tests
+const matchMediaMock = (query: string) => ({
+  matches: false,
+  media: query,
+  onchange: null,
+  addListener: () => {}, // deprecated
+  removeListener: () => {}, // deprecated
+  addEventListener: () => {},
+  removeEventListener: () => {},
+  dispatchEvent: () => {},
+})
+
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: jest.fn().mockImplementation(query => ({
-    matches: false,
-    media: query,
-    onchange: null,
-    addListener: jest.fn(), // deprecated
-    removeListener: jest.fn(), // deprecated
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
-  })),
+  value: matchMediaMock,
 })
 
 // Mock localStorage
 const localStorageMock = {
-  getItem: jest.fn(),
-  setItem: jest.fn(),
-  removeItem: jest.fn(),
-  clear: jest.fn(),
+  getItem: () => null,
+  setItem: () => {},
+  removeItem: () => {},
+  clear: () => {},
 }
 Object.defineProperty(window, 'localStorage', {
   value: localStorageMock,
@@ -40,8 +54,8 @@ Object.defineProperty(window, 'localStorage', {
 
 // Mock document methods
 const classListMock = {
-  add: jest.fn(),
-  remove: jest.fn(),
+  add: () => {},
+  remove: () => {},
 }
 Object.defineProperty(document, 'documentElement', {
   value: {
@@ -57,40 +71,56 @@ Object.defineProperty(document, 'hidden', {
 })
 
 // Mock document event listeners
-document.addEventListener = jest.fn()
-document.removeEventListener = jest.fn()
+document.addEventListener = () => {}
+document.removeEventListener = () => {}
 
 // Mock document.querySelector
-document.querySelector = jest.fn()
+document.querySelector = () => null
 
 // Mock document.body for React Testing Library
 Object.defineProperty(document, 'body', {
   value: {
-    appendChild: jest.fn(() => ({})),
+    appendChild: () => ({}),
   },
   writable: true,
 })
 
 // Mock document.createElement
-document.createElement = jest.fn(() => ({}) as any)
+document.createElement = () => ({}) as any
 
 // Mock window.alert for CardEditor tests
-window.alert = jest.fn()
+window.alert = () => {}
 
-// Reset all mocks before each test
-beforeEach(() => {
-  jest.clearAllMocks()
-  localStorageMock.getItem.mockReturnValue(null)
-  localStorageMock.setItem.mockClear()
-  localStorageMock.removeItem.mockClear()
-  localStorageMock.clear.mockClear()
-  classListMock.add.mockClear()
-  classListMock.remove.mockClear()
-  ;(global.document.addEventListener as any).mockClear()
-  ;(global.document.removeEventListener as any).mockClear()
-  ;(global.document.querySelector as any).mockClear()
-  ;(global.document.body.appendChild as any).mockClear()
-  ;(global.document.createElement as any).mockClear()
-  ;(global.window.matchMedia as any).mockClear()
-  ;(global.window.alert as any).mockClear()
+// Mock @dnd-kit modules globally for component tests
+;(globalThis as any).jest = {
+  mock: () => {}, // No-op for now
+  fn: () => () => {},
+  clearAllMocks: () => {},
+  spyOn: () => ({
+    mockResolvedValue: () => {},
+    mockRejectedValue: () => {},
+    mockImplementation: () => {},
+  }),
+}
+
+// Mock @dnd-kit/sortable
+const mockUseSortable = () => ({
+  attributes: {},
+  listeners: {},
+  setNodeRef: () => {},
+  transform: null,
+  transition: null,
+  isDragging: false,
 })
+
+const mockCSS = {
+  Transform: {
+    toString: () => '',
+  },
+}
+
+// Try to mock the modules by setting them on global
+;(globalThis as any)['@dnd-kit/sortable'] = { useSortable: mockUseSortable }
+;(globalThis as any)['@dnd-kit/utilities'] = { CSS: mockCSS }
+
+// Initial setup complete - individual test files will handle mock resets
