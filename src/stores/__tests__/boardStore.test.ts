@@ -43,6 +43,11 @@ describe('boardStore', () => {
     jest.clearAllMocks()
   })
 
+  afterEach(() => {
+    // Restore all mocks to prevent test interference
+    jest.restoreAllMocks()
+  })
+
   describe('loadCards', () => {
     it('should load cards from file system', async () => {
       jest.spyOn(fileOperations, 'readAllCards').mockResolvedValue(mockCards)
