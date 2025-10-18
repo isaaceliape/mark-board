@@ -1,6 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react'
 import { CardEditor } from '../CardEditor'
 import { Card } from '../../types'
+import { vi } from 'vitest'
 
 const mockCard: Card = {
   id: 'test-card',
@@ -18,17 +19,17 @@ const mockCard: Card = {
 }
 
 describe('CardEditor', () => {
-  const mockOnSave = jest.fn()
-  const mockOnCancel = jest.fn()
+  const mockOnSave = vi.fn()
+  const mockOnCancel = vi.fn()
 
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
     // Mock alert
-    jest.spyOn(window, 'alert').mockImplementation(() => {})
+    vi.spyOn(window, 'alert').mockImplementation(() => {})
   })
 
   afterEach(() => {
-    jest.restoreAllMocks()
+    vi.restoreAllMocks()
   })
 
   describe('new card creation', () => {

@@ -1,8 +1,16 @@
+import { vi } from 'vitest'
+
+// Mock the file operations module
+vi.mock('../../utils/fileOperations', () => ({
+  readAllCards: vi.fn(),
+  createCard: vi.fn(),
+  updateCard: vi.fn(),
+  deleteCard: vi.fn(),
+  moveCard: vi.fn(),
+}))
+
 import { useBoardStore } from '../boardStore'
 import * as fileOperations from '../../utils/fileOperations'
-
-// Mock the file operations
-jest.mock('../../utils/fileOperations')
 
 // Mock card data
 const mockCards = [
@@ -33,7 +41,7 @@ const mockCards = [
 describe('boardStore', () => {
   beforeEach(() => {
     // Reset all mocks before each test
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 
     // Reset the store to initial state
     useBoardStore.setState({
@@ -49,7 +57,7 @@ describe('boardStore', () => {
 
   describe('loadCards', () => {
     it('should load cards from file system', async () => {
-      ;(fileOperations.readAllCards as jest.Mock).mockResolvedValue(mockCards)
+      ;(fileOperations.readAllCards as any).mockResolvedValue(mockCards)
 
       await useBoardStore.getState().loadCards()
 
@@ -61,7 +69,7 @@ describe('boardStore', () => {
     })
 
     it('should handle errors when loading cards', async () => {
-      ;(fileOperations.readAllCards as jest.Mock).mockRejectedValue(
+      ;(fileOperations.readAllCards as any).mockRejectedValue(
         new Error('Failed to read')
       )
 
@@ -82,7 +90,7 @@ describe('boardStore', () => {
         column: 'backlog',
       }
 
-      ;(fileOperations.createCard as jest.Mock).mockResolvedValue(newCard)
+      ;(fileOperations.createCard as any).mockResolvedValue(newCard)
 
       await useBoardStore.getState().addCard('New Card', 'backlog')
 
@@ -92,7 +100,7 @@ describe('boardStore', () => {
     })
 
     it('should handle errors when adding a card', async () => {
-      ;(fileOperations.createCard as jest.Mock).mockRejectedValue(
+      ;(fileOperations.createCard as any).mockRejectedValue(
         new Error('Failed to create')
       )
 
@@ -115,12 +123,12 @@ describe('boardStore', () => {
         column: 'backlog',
       }
 
-      ;(fileOperations.createCard as jest.Mock).mockResolvedValue(newCard)
+      ;(fileOperations.createCard as any).mockResolvedValue(newCard)
       await useBoardStore.getState().addCard('Original Title', 'backlog')
 
       // Mock the update operation
       const updatedCard = { ...newCard, title: 'Updated Title' }
-      ;(fileOperations.updateCard as jest.Mock).mockResolvedValue(updatedCard)
+      ;(fileOperations.updateCard as any).mockResolvedValue(updatedCard)
 
       // Update the card
       await useBoardStore
@@ -140,11 +148,11 @@ describe('boardStore', () => {
         column: 'backlog',
       }
 
-      ;(fileOperations.createCard as jest.Mock).mockResolvedValue(newCard)
+      ;(fileOperations.createCard as any).mockResolvedValue(newCard)
       await useBoardStore.getState().addCard('Error Update Card', 'backlog')
 
       // Mock the update operation to fail
-      ;(fileOperations.updateCard as jest.Mock).mockRejectedValue(
+      ;(fileOperations.updateCard as any).mockRejectedValue(
         new Error('Failed to update')
       )
 
@@ -178,12 +186,12 @@ describe('boardStore', () => {
         column: 'backlog',
       }
 
-      ;(fileOperations.createCard as jest.Mock).mockResolvedValue(newCard)
+      ;(fileOperations.createCard as any).mockResolvedValue(newCard)
       await useBoardStore.getState().addCard('Move Card', 'backlog')
 
       // Mock the move operation
       const movedCard = { ...newCard, column: 'in-progress' }
-      ;(fileOperations.moveCard as jest.Mock).mockResolvedValue(movedCard)
+      ;(fileOperations.moveCard as any).mockResolvedValue(movedCard)
 
       // Move the card
       await useBoardStore.getState().moveCard('move-card', 'in-progress')
@@ -203,7 +211,7 @@ describe('boardStore', () => {
         column: 'backlog',
       }
 
-      ;(fileOperations.createCard as jest.Mock).mockResolvedValue(newCard)
+      ;(fileOperations.createCard as any).mockResolvedValue(newCard)
       await useBoardStore.getState().addCard('Same Column Card', 'backlog')
 
       // Move the card to the same column (should not do anything)
@@ -225,11 +233,11 @@ describe('boardStore', () => {
         column: 'backlog',
       }
 
-      ;(fileOperations.createCard as jest.Mock).mockResolvedValue(newCard)
+      ;(fileOperations.createCard as any).mockResolvedValue(newCard)
       await useBoardStore.getState().addCard('Delete Card', 'backlog')
 
       // Mock the delete operation
-      ;(fileOperations.deleteCard as jest.Mock).mockResolvedValue(undefined)
+      ;(fileOperations.deleteCard as any).mockResolvedValue(undefined)
 
       // Delete the card
       await useBoardStore.getState().deleteCard('delete-card')
@@ -247,11 +255,11 @@ describe('boardStore', () => {
         column: 'backlog',
       }
 
-      ;(fileOperations.createCard as jest.Mock).mockResolvedValue(newCard)
+      ;(fileOperations.createCard as any).mockResolvedValue(newCard)
       await useBoardStore.getState().addCard('Error Delete Card', 'backlog')
 
       // Mock the delete operation to fail
-      ;(fileOperations.deleteCard as jest.Mock).mockRejectedValue(
+      ;(fileOperations.deleteCard as any).mockRejectedValue(
         new Error('Failed to delete')
       )
 

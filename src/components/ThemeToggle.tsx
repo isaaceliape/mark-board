@@ -21,6 +21,11 @@ export function ThemeToggle() {
     return stored || getSystemTheme()
   })
 
+  const [hasManualOverride, setHasManualOverride] = useState<boolean>(() => {
+    // Check if user has ever manually set a preference
+    return getStoredTheme() !== null
+  })
+
   // Listen for system preference changes
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -28,11 +33,17 @@ export function ThemeToggle() {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
 
     const handleChange = (e: MediaQueryListEvent) => {
-      // Only auto-switch if user hasn't manually set a preference
-      const stored = getStoredTheme()
-      if (!stored) {
+      console.log(
+        'System theme preference changed:',
+        e.matches ? 'dark' : 'light'
+      )
+      // Only auto-switch if user has never manually overridden the theme
+      if (!hasManualOverride) {
+        console.log('Auto-switching theme to match system preference')
         const newTheme = e.matches ? 'dark' : 'light'
         setTheme(newTheme)
+      } else {
+        console.log('Ignoring system preference change due to manual override')
       }
     }
 
@@ -45,7 +56,29 @@ export function ThemeToggle() {
       mediaQuery.addListener(handleChange)
       return () => mediaQuery.removeListener(handleChange)
     }
-  }, [])
+  }, [hasManualOverride])
+
+  // Also listen for visibility changes to check theme when user returns to tab
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+
+    const handleVisibilityChange = () => {
+      if (!document.hidden && !hasManualOverride) {
+        // Check if system preference has changed while tab was hidden
+        const currentSystemTheme = getSystemTheme()
+        if (currentSystemTheme !== theme) {
+          console.log(
+            'System theme changed while tab was hidden, updating theme'
+          )
+          setTheme(currentSystemTheme)
+        }
+      }
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    return () =>
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+  }, [hasManualOverride, theme])
 
   useEffect(() => {
     const root = document.documentElement
@@ -57,6 +90,7 @@ export function ThemeToggle() {
   }, [theme])
 
   const toggle = () => {
+    setHasManualOverride(true) // Mark that user has manually set preference
     setTheme(prev => {
       const newTheme = prev === 'dark' ? 'light' : 'dark'
       // Save manual preference to localStorage
