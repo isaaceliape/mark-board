@@ -25,6 +25,7 @@ export const Board = () => {
     columns,
     isLoading,
     error,
+    filters,
     loadCards,
     addCard,
     updateCard,
@@ -35,6 +36,45 @@ export const Board = () => {
   const [activeCard, setActiveCard] = useState<CardType | null>(null)
   const [editingCard, setEditingCard] = useState<CardType | null>(null)
   const [fsInitialized, setFsInitialized] = useState(false)
+
+  // Filter cards based on search and filter criteria
+  const filterCards = (cards: CardType[]): CardType[] => {
+    return cards.filter(card => {
+      // Search filter (title and content)
+      if (filters.search) {
+        const searchLower = filters.search.toLowerCase()
+        const titleMatch = card.title.toLowerCase().includes(searchLower)
+        const contentMatch = card.content.toLowerCase().includes(searchLower)
+        if (!titleMatch && !contentMatch) {
+          return false
+        }
+      }
+
+      // Tags filter
+      if (filters.tags.length > 0) {
+        const cardTags = card.metadata.tags || []
+        const hasMatchingTag = filters.tags.some(tag => cardTags.includes(tag))
+        if (!hasMatchingTag) {
+          return false
+        }
+      }
+
+      // Assignee filter
+      if (filters.assignee) {
+        if (card.metadata.assignee !== filters.assignee) {
+          return false
+        }
+      }
+
+      return true
+    })
+  }
+
+  // Create filtered columns
+  const filteredColumns = columns.map(column => ({
+    ...column,
+    cards: filterCards(column.cards),
+  }))
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -184,7 +224,7 @@ export const Board = () => {
       onDragEnd={handleDragEnd}
     >
       <div className="flex gap-4 p-6 h-screen overflow-x-auto bg-gray-100 dark:bg-gray-900">
-        {columns.map(column => (
+        {filteredColumns.map(column => (
           <Column
             key={column.id}
             id={column.id}

@@ -8,10 +8,17 @@ import {
   moveCard as moveCardFile,
 } from '../utils/fileOperations'
 
+export interface SearchFilters {
+  search: string
+  tags: string[]
+  assignee: string
+}
+
 interface BoardState {
   columns: Column[]
   isLoading: boolean
   error: string | null
+  filters: SearchFilters
 
   // Actions
   loadCards: () => Promise<void>
@@ -26,6 +33,7 @@ interface BoardState {
   deleteCard: (cardId: string) => Promise<void>
   syncFromFileSystem: (cards: Card[]) => void
   setError: (error: string | null) => void
+  setFilters: (filters: SearchFilters) => void
 }
 
 const COLUMN_IDS = ['backlog', 'in-progress', 'done']
@@ -43,6 +51,11 @@ export const useBoardStore = create<BoardState>((set, get) => ({
   })),
   isLoading: false,
   error: null,
+  filters: {
+    search: '',
+    tags: [],
+    assignee: '',
+  },
 
   loadCards: async () => {
     set({ isLoading: true, error: null })
@@ -257,5 +270,9 @@ export const useBoardStore = create<BoardState>((set, get) => ({
 
   setError: (error: string | null) => {
     set({ error })
+  },
+
+  setFilters: (filters: SearchFilters) => {
+    set({ filters })
   },
 }))
