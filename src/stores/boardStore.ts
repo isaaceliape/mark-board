@@ -19,6 +19,7 @@ interface BoardState {
   isLoading: boolean
   error: string | null
   filters: SearchFilters
+  selectedCardId: string | null
 
   // Actions
   loadCards: () => Promise<void>
@@ -34,6 +35,7 @@ interface BoardState {
   syncFromFileSystem: (cards: Card[]) => void
   setError: (error: string | null) => void
   setFilters: (filters: SearchFilters) => void
+  setSelectedCard: (cardId: string | null) => void
 }
 
 const COLUMN_IDS = ['backlog', 'in-progress', 'done']
@@ -56,6 +58,7 @@ export const useBoardStore = create<BoardState>((set, get) => ({
     tags: [],
     assignees: [],
   },
+  selectedCardId: null,
 
   loadCards: async () => {
     set({ isLoading: true, error: null })
@@ -224,7 +227,7 @@ export const useBoardStore = create<BoardState>((set, get) => ({
   },
 
   deleteCard: async (cardId: string) => {
-    const { columns } = get()
+    const { columns, selectedCardId } = get()
 
     // Find the card
     let targetCard: Card | null = null
@@ -249,6 +252,7 @@ export const useBoardStore = create<BoardState>((set, get) => ({
           ...col,
           cards: col.cards.filter(card => card.id !== cardId),
         })),
+        selectedCardId: selectedCardId === cardId ? null : selectedCardId,
       }))
     } catch (error) {
       const message =
@@ -274,5 +278,9 @@ export const useBoardStore = create<BoardState>((set, get) => ({
 
   setFilters: (filters: SearchFilters) => {
     set({ filters })
+  },
+
+  setSelectedCard: (cardId: string | null) => {
+    set({ selectedCardId: cardId })
   },
 }))

@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useCallback, useMemo } from 'react'
 import {
   DndContext,
   DragOverlay,
@@ -13,6 +13,7 @@ import { Card as CardType } from '../types'
 import { Column } from './Column'
 import { Card } from './Card'
 import { CardEditor } from './CardEditor'
+import { CommandPalette } from './CommandPalette'
 import { useBoardStore } from '../stores/boardStore'
 import { fsAPI } from '../utils/fileOperations'
 import {
@@ -26,58 +27,76 @@ export const Board = () => {
     isLoading,
     error,
     filters,
+    selectedCardId,
     loadCards,
     addCard,
     updateCard,
     moveCard,
     deleteCard,
     setError,
+    setSelectedCard,
   } = useBoardStore()
   const [activeCard, setActiveCard] = useState<CardType | null>(null)
   const [editingCard, setEditingCard] = useState<CardType | null>(null)
   const [fsInitialized, setFsInitialized] = useState(false)
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false)
 
   // Filter cards based on search and filter criteria
-  const filterCards = (cards: CardType[]): CardType[] => {
-    return cards.filter(card => {
-      // Search filter (title and content)
-      if (filters.search) {
-        const searchLower = filters.search.toLowerCase()
-        const titleMatch = card.title.toLowerCase().includes(searchLower)
-        const contentMatch = card.content.toLowerCase().includes(searchLower)
-        if (!titleMatch && !contentMatch) {
-          return false
+  const filterCards = useCallback(
+    (cards: CardType[]): CardType[] => {
+      return cards.filter(card => {
+        // Search filter (title and content)
+        if (filters.search) {
+          const searchLower = filters.search.toLowerCase()
+          const titleMatch = card.title.toLowerCase().includes(searchLower)
+          const contentMatch = card.content.toLowerCase().includes(searchLower)
+          if (!titleMatch && !contentMatch) {
+            return false
+          }
         }
-      }
 
-      // Tags filter
-      if (filters.tags.length > 0) {
-        const cardTags = card.metadata.tags || []
-        const hasMatchingTag = filters.tags.some(tag => cardTags.includes(tag))
-        if (!hasMatchingTag) {
-          return false
+        // Tags filter
+        if (filters.tags.length > 0) {
+          const cardTags = card.metadata.tags || []
+          const hasMatchingTag = filters.tags.some(tag =>
+            cardTags.includes(tag)
+          )
+          if (!hasMatchingTag) {
+            return false
+          }
         }
-      }
 
-      // Assignees filter
-      if (filters.assignees.length > 0) {
-        if (
-          !card.metadata.assignee ||
-          !filters.assignees.includes(card.metadata.assignee)
-        ) {
-          return false
+        // Assignees filter
+        if (filters.assignees.length > 0) {
+          if (
+            !card.metadata.assignee ||
+            !filters.assignees.includes(card.metadata.assignee)
+          ) {
+            return false
+          }
         }
-      }
 
-      return true
-    })
-  }
+        return true
+      })
+    },
+    [filters]
+  )
 
   // Create filtered columns
-  const filteredColumns = columns.map(column => ({
-    ...column,
-    cards: filterCards(column.cards),
-  }))
+  const filteredColumns = useMemo(
+    () =>
+      columns.map(column => ({
+        ...column,
+        cards: filterCards(column.cards),
+      })),
+    [columns, filterCards]
+  )
+
+  // Get all filtered card IDs in column order
+  const allCardIds = useMemo(
+    () => filteredColumns.flatMap(col => col.cards.map(card => card.id)),
+    [filteredColumns]
+  )
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -169,12 +188,90 @@ export const Board = () => {
     setEditingCard(null)
   }
 
-  const handleOpenEditModal = (cardId: string) => {
-    const card = columns.flatMap(col => col.cards).find(c => c.id === cardId)
-    if (card) {
-      setEditingCard(card)
+  const handleOpenEditModal = useCallback(
+    (cardId: string) => {
+      const card = columns.flatMap(col => col.cards).find(c => c.id === cardId)
+      if (card) {
+        setEditingCard(card)
+      }
+    },
+    [columns]
+  )
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Ignore if editing or modal is open
+      if (editingCard) {
+        if (event.key === 'Escape') {
+          setEditingCard(null)
+        }
+        return
+      }
+
+      switch (event.key) {
+        case 'n':
+          // Create new card in backlog
+          event.preventDefault()
+          addCard('New Card', 'backlog')
+          break
+        case 'e':
+          // Edit selected card
+          if (selectedCardId) {
+            event.preventDefault()
+            handleOpenEditModal(selectedCardId)
+          }
+          break
+        case 'Delete':
+          // Delete selected card
+          if (selectedCardId) {
+            event.preventDefault()
+            if (window.confirm('Are you sure you want to delete this card?')) {
+              deleteCard(selectedCardId)
+            }
+          }
+          break
+        case 'ArrowLeft':
+          // Navigate to previous card
+          if (selectedCardId) {
+            event.preventDefault()
+            const currentIndex = allCardIds.indexOf(selectedCardId)
+            if (currentIndex > 0) {
+              setSelectedCard(allCardIds[currentIndex - 1])
+            }
+          }
+          break
+        case 'ArrowRight':
+          // Navigate to next card
+          if (selectedCardId) {
+            event.preventDefault()
+            const currentIndex = allCardIds.indexOf(selectedCardId)
+            if (currentIndex < allCardIds.length - 1) {
+              setSelectedCard(allCardIds[currentIndex + 1])
+            }
+          }
+          break
+        case 'k':
+          // Open command palette
+          if (event.metaKey || event.ctrlKey) {
+            event.preventDefault()
+            setIsCommandPaletteOpen(true)
+          }
+          break
+      }
     }
-  }
+
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [
+    editingCard,
+    selectedCardId,
+    allCardIds,
+    addCard,
+    deleteCard,
+    setSelectedCard,
+    handleOpenEditModal,
+  ])
 
   const handleSelectDirectory = async () => {
     try {
@@ -233,6 +330,7 @@ export const Board = () => {
             id={column.id}
             title={column.title}
             cards={column.cards}
+            selectedCardId={selectedCardId}
             onAddCard={data => handleAddCard(column.id, data)}
             onEditCard={handleEditCard}
             onDeleteCard={deleteCard}
@@ -260,6 +358,25 @@ export const Board = () => {
           </div>
         </div>
       )}
+
+      <CommandPalette
+        isOpen={isCommandPaletteOpen}
+        onClose={() => setIsCommandPaletteOpen(false)}
+        onCreateCard={() => addCard('New Card', 'backlog')}
+        onEditCard={() => {
+          if (selectedCardId) {
+            handleOpenEditModal(selectedCardId)
+          }
+        }}
+        onDeleteCard={() => {
+          if (selectedCardId) {
+            if (window.confirm('Are you sure you want to delete this card?')) {
+              deleteCard(selectedCardId)
+            }
+          }
+        }}
+        hasSelectedCard={!!selectedCardId}
+      />
     </DndContext>
   )
 }

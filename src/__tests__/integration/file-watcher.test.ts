@@ -40,12 +40,14 @@ describe('File Watcher Integration', () => {
     // Create mock watcher API
     watchCallbacks = {}
     mockWatcherAPI = {
-      watch: jest.fn(
-        (path: string, callback: (event: FileChangeEvent) => void) => {
-          watchCallbacks[path] = callback
-          return jest.fn() // unsubscribe function
-        }
-      ),
+      watch: jest
+        .fn()
+        .mockImplementation(
+          (path: string, callback: (event: FileChangeEvent) => void) => {
+            watchCallbacks[path] = callback
+            return jest.fn() // unsubscribe function
+          }
+        ),
     }
     setFileWatcherAPI(mockWatcherAPI)
 
@@ -61,7 +63,13 @@ describe('File Watcher Integration', () => {
   })
 
   it('should sync file changes to store state', async () => {
-    // Mock reading updated cards
+    // Mock file system to return the new file for backlog column
+    mockFsAPI.readdir.mockImplementation((path: string) => {
+      if (path === './kanban-data/backlog') {
+        return Promise.resolve(['new-card.md'])
+      }
+      return Promise.resolve([])
+    })
     mockFsAPI.readFile.mockResolvedValue(
       '---\ntitle: New Card from File\n---\nContent from file'
     )
@@ -76,6 +84,15 @@ describe('File Watcher Integration', () => {
         updated: new Date('2023-01-01'),
       },
     })
+
+    // Simulate setting up the file watcher (what the hook would do)
+    const callback = jest.fn((_event: FileChangeEvent) => {
+      // Simulate the board's file change handler
+      useBoardStore.getState().loadCards()
+    })
+
+    // Manually call the watcher setup (simulating useEffect)
+    mockWatcherAPI.watch('./kanban-data/backlog', callback)
 
     // Simulate file change event
     const changeEvent: FileChangeEvent = {
@@ -123,6 +140,12 @@ describe('File Watcher Integration', () => {
     // Mock reading cards after deletion (empty)
     jest.spyOn(fileOperations, 'readAllCards').mockResolvedValue([])
 
+    // Set up file watcher callback
+    const callback = jest.fn((_event: FileChangeEvent) => {
+      useBoardStore.getState().loadCards()
+    })
+    mockWatcherAPI.watch('./kanban-data/backlog', callback)
+
     // Simulate file deletion event
     const deleteEvent: FileChangeEvent = {
       type: 'unlink',
@@ -143,7 +166,7 @@ describe('File Watcher Integration', () => {
 
   it('should set up watchers for all columns', () => {
     // Simulate setting up the file watcher (what the hook would do)
-    const callback = jest.fn(() => {
+    const callback = jest.fn((_event: FileChangeEvent) => {
       // Simulate the board's file change handler
       useBoardStore.getState().loadCards()
     })

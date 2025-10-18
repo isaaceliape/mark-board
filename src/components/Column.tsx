@@ -1,3 +1,4 @@
+import React from 'react'
 import { useState } from 'react'
 import { useDroppable } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
@@ -9,6 +10,7 @@ interface ColumnProps {
   id: string
   title: string
   cards: CardType[]
+  selectedCardId?: string | null
   onAddCard: (data: {
     title: string
     content: string
@@ -26,15 +28,16 @@ interface ColumnProps {
   onOpenEditModal?: (cardId: string) => void
 }
 
-export const Column = ({
+export const Column = React.memo(function Column({
   id,
   title,
   cards,
+  selectedCardId,
   onAddCard,
   onEditCard,
   onDeleteCard,
   onOpenEditModal,
-}: ColumnProps) => {
+}: ColumnProps) {
   const [isAdding, setIsAdding] = useState(false)
   const [editingCardId, setEditingCardId] = useState<string | null>(null)
 
@@ -97,6 +100,7 @@ export const Column = ({
               <Card
                 key={card.id}
                 card={card}
+                selected={selectedCardId === card.id}
                 onEdit={() => onOpenEditModal && onOpenEditModal(card.id)}
                 onDelete={() => onDeleteCard(card.id)}
               />
@@ -124,4 +128,4 @@ export const Column = ({
       </div>
     </div>
   )
-}
+})

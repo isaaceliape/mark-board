@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useBoardStore } from '../stores/boardStore'
 
 export const SearchFilter = () => {
   const { columns, setFilters } = useBoardStore()
   const cards = columns.flatMap(col => col.cards)
-  const [search, setSearch] = useState('')
+  const [searchInput, setSearchInput] = useState('')
+  const [debouncedSearch, setDebouncedSearch] = useState('')
   const [selectedTags, setSelectedTags] = useState<string[]>([])
   const [selectedAssignees, setSelectedAssignees] = useState<string[]>([])
 
@@ -21,14 +22,22 @@ export const SearchFilter = () => {
     )
   ).sort()
 
+  // Debounce search input
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchInput)
+    }, 300)
+    return () => clearTimeout(timer)
+  }, [searchInput])
+
   // Update filters when any filter changes
   useEffect(() => {
     setFilters({
-      search,
+      search: debouncedSearch,
       tags: selectedTags,
       assignees: selectedAssignees,
     })
-  }, [search, selectedTags, selectedAssignees, setFilters])
+  }, [debouncedSearch, selectedTags, selectedAssignees, setFilters])
 
   const handleAddTag = (tag: string) => {
     if (tag && !selectedTags.includes(tag)) {
@@ -51,13 +60,13 @@ export const SearchFilter = () => {
   }
 
   const clearFilters = () => {
-    setSearch('')
+    setSearchInput('')
     setSelectedTags([])
     setSelectedAssignees([])
   }
 
   const hasActiveFilters =
-    search || selectedTags.length > 0 || selectedAssignees.length > 0
+    searchInput || selectedTags.length > 0 || selectedAssignees.length > 0
 
   return (
     <>
@@ -68,13 +77,13 @@ export const SearchFilter = () => {
           <input
             type="text"
             placeholder="Search cards..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
+            value={searchInput}
+            onChange={e => setSearchInput(e.target.value)}
             className="w-64 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
-          {search && (
+          {searchInput && (
             <button
-              onClick={() => setSearch('')}
+              onClick={() => setSearchInput('')}
               className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
             >
               ×
@@ -122,15 +131,14 @@ export const SearchFilter = () => {
           </div>
         )}
 
-        {/* Clear Filters Button */}
-        {hasActiveFilters && (
-          <button
-            onClick={clearFilters}
-            className="px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-          >
-            Clear filters
-          </button>
-        )}
+        {/* Clear All Filters Button */}
+        <button
+          onClick={clearFilters}
+          disabled={!hasActiveFilters}
+          className="px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700"
+        >
+          Clear All Filters
+        </button>
       </div>
 
       {/* Selected Filters Display */}

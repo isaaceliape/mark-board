@@ -1,3 +1,4 @@
+import React from 'react'
 import { Card as CardType } from '../types'
 import { useState } from 'react'
 import { useSortable } from '@dnd-kit/sortable'
@@ -6,11 +7,17 @@ import { useNavigate } from 'react-router-dom'
 
 interface CardProps {
   card: CardType
+  selected?: boolean
   onEdit: () => void
   onDelete: (cardId: string) => void
 }
 
-export function Card({ card, onEdit, onDelete }: CardProps) {
+export const Card = React.memo(function Card({
+  card,
+  selected = false,
+  onEdit,
+  onDelete,
+}: CardProps) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const navigate = useNavigate()
 
@@ -66,7 +73,11 @@ export function Card({ card, onEdit, onDelete }: CardProps) {
       style={style}
       {...attributes}
       {...listeners}
-      className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 hover:shadow-md transition-shadow cursor-pointer relative"
+      className={`bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-4 hover:shadow-md transition-shadow cursor-pointer relative ${
+        selected
+          ? 'border-blue-500 ring-2 ring-blue-200'
+          : 'border-gray-200 dark:border-gray-700'
+      }`}
     >
       <div className="flex justify-between items-start mb-2">
         <h3
@@ -141,4 +152,4 @@ export function Card({ card, onEdit, onDelete }: CardProps) {
       </button>
     </div>
   )
-}
+})

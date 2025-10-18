@@ -18,3 +18,4 @@ As a power user, I want keyboard actions so that I can work faster.
 - Delete removes selected card with confirmation
 - Arrow keys navigate between cards
 - Esc cancels edit mode
+- Cmd+K (Ctrl+K) opens command palette with options to create, edit, or delete user stories
