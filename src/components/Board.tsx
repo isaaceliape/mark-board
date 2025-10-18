@@ -385,7 +385,7 @@ export const Board = () => {
       <CommandPalette
         isOpen={isCommandPaletteOpen}
         onClose={() => setIsCommandPaletteOpen(false)}
-        onCreateCard={() => addCard('New Card', 'backlog')}
+        onCreateCard={() => setCreatingCard({ columnId: 'backlog' })}
         onEditCard={() => {
           if (selectedCardId) {
             handleOpenEditModal(selectedCardId)
