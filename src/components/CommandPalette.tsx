@@ -62,14 +62,20 @@ export const CommandPalette = ({
           return
         }
 
-        if (event.key === 'ArrowDown') {
+        if (event.key === 'ArrowDown' || event.key === 'j') {
           event.preventDefault()
           setStorySelectedIndex(prev => (prev + 1) % allCards.length)
-        } else if (event.key === 'ArrowUp') {
+        } else if (event.key === 'ArrowUp' || event.key === 'k') {
           event.preventDefault()
           setStorySelectedIndex(
             prev => (prev - 1 + allCards.length) % allCards.length
           )
+        } else if (event.key === 'h') {
+          // VIM: go back from card selection
+          event.preventDefault()
+          setShowingStoryList(false)
+          setDeleteMode(false)
+          setStorySelectedIndex(0)
         } else if (event.key === 'Enter') {
           event.preventDefault()
           if (deleteMode) {
@@ -92,10 +98,10 @@ export const CommandPalette = ({
           return
         }
 
-        if (event.key === 'ArrowDown') {
+        if (event.key === 'ArrowDown' || event.key === 'j') {
           event.preventDefault()
           setSelectedIndex(prev => (prev + 1) % commands.length)
-        } else if (event.key === 'ArrowUp') {
+        } else if (event.key === 'ArrowUp' || event.key === 'k') {
           event.preventDefault()
           setSelectedIndex(
             prev => (prev - 1 + commands.length) % commands.length
@@ -230,8 +236,8 @@ export const CommandPalette = ({
           )}
           <div className="text-xs text-gray-400 dark:text-gray-500 mt-3">
             {showingStoryList || deleteMode
-              ? 'Use ↑↓ to navigate, Enter to select, Esc to go back'
-              : 'Use ↑↓ to navigate, Enter to select, Esc to close'}
+              ? 'Use ↑↓/jk to navigate, Enter to select, Esc/h to go back'
+              : 'Use ↑↓/jk to navigate, Enter to select, Esc to close'}
           </div>
         </div>
       </div>

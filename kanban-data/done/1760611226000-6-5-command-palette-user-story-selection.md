@@ -13,7 +13,7 @@ As a power user, I want to quickly open any user story from the command palette 
 
 ## Acceptance Criteria
 
-- Command palette includes "Open user story" option
+- Command palette includes "Open card" option
 - Selecting it shows a searchable list of all user stories
 - Keyboard navigation with arrows and enter to select
 - Selecting a user story opens its edit modal
