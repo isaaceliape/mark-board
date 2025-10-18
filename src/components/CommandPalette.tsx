@@ -37,7 +37,7 @@ export const CommandPalette = ({
       enabled: true,
     },
     { label: 'Delete card', action: () => setDeleteMode(true), enabled: true },
-    { label: 'Create new card', action: onCreateCard, enabled: true },
+    { label: 'Create card', action: onCreateCard, enabled: true },
     {
       label: 'Edit selected card',
       action: onEditCard,
