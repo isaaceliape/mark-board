@@ -103,7 +103,10 @@ export const CommandPalette = ({
         } else if (event.key === 'Enter') {
           event.preventDefault()
           const command = commands[selectedIndex]
-          if (command.label === 'Open card') {
+          if (
+            command.label === 'Open card' ||
+            command.label === 'Delete card'
+          ) {
             command.action()
           } else {
             command.action()
@@ -201,7 +204,10 @@ export const CommandPalette = ({
                 <button
                   key={index}
                   onClick={() => {
-                    if (command.label === 'Open card') {
+                    if (
+                      command.label === 'Open card' ||
+                      command.label === 'Delete card'
+                    ) {
                       command.action()
                     } else {
                       command.action()
