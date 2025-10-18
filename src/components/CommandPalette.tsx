@@ -141,7 +141,10 @@ export const CommandPalette = ({
 
   // Scroll selected item into view
   useEffect(() => {
-    if (showingStoryList && itemRefs.current[storySelectedIndex]) {
+    if (
+      (showingStoryList || deleteMode) &&
+      itemRefs.current[storySelectedIndex]
+    ) {
       itemRefs.current[storySelectedIndex]?.scrollIntoView({
         behavior: 'smooth',
         block: 'nearest',
