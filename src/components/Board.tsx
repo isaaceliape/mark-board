@@ -330,7 +330,7 @@ export const Board = () => {
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
-      <div className="flex gap-4 p-6 h-screen overflow-x-auto bg-gray-100 dark:bg-gray-900">
+      <div className="flex gap-4 p-6 h-screen overflow-x-auto bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
         {filteredColumns.map(column => (
           <Column
             key={column.id}

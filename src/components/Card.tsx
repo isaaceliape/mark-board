@@ -73,7 +73,7 @@ export const Card = React.memo(function Card({
       style={style}
       {...attributes}
       {...listeners}
-      className={`bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-4 hover:shadow-md transition-shadow cursor-pointer relative ${
+      className={`bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-4 hover:shadow-md hover:scale-105 transition-all duration-200 cursor-pointer relative ${
         selected
           ? 'border-blue-500 ring-2 ring-blue-200'
           : 'border-gray-200 dark:border-gray-700'
@@ -121,7 +121,7 @@ export const Card = React.memo(function Card({
             {card.metadata.tags.map(tag => (
               <span
                 key={tag}
-                className="bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-2 py-1 rounded"
+                className="bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-2 py-1 rounded transition-colors duration-200"
               >
                 {tag}
               </span>
@@ -130,13 +130,13 @@ export const Card = React.memo(function Card({
         )}
 
         {card.metadata.assignee && (
-          <span className="bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 px-2 py-1 rounded">
+          <span className="bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 px-2 py-1 rounded transition-colors duration-200">
             {card.metadata.assignee}
           </span>
         )}
 
         {card.metadata.dueDate && (
-          <span className="bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 px-2 py-1 rounded">
+          <span className="bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 px-2 py-1 rounded transition-colors duration-200">
             Due {formatDate(card.metadata.dueDate)}
           </span>
         )}

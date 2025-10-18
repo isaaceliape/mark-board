@@ -27,7 +27,7 @@ These commands MUST pass with 0 errors/warnings before any commit. If they fail,
 
 ## Build/Lint/Test Commands
 
-**Always use Bun, never npm. Use `bunx` instead of `npx` for running executables.**
+**Always use Bun, never npm. NEVER use `npx` in any circumstance - use `bunx` instead for running executables.**
 
 - **Build**: `bun run build` (TypeScript compilation + Vite build)
 - **Lint**: `bun run lint` (ESLint with React/TypeScript rules, 0 warnings allowed)

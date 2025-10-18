@@ -52,7 +52,7 @@ export const Column = React.memo(function Column({
   const editingCard = cards.find(card => card.id === editingCardId)
 
   return (
-    <div className="flex flex-col h-full w-80 bg-gray-50 dark:bg-gray-900 rounded-lg">
+    <div className="flex flex-col h-full w-72 sm:w-80 bg-gray-50 dark:bg-gray-900 rounded-lg">
       <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-t-lg">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">

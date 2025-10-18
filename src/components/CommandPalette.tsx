@@ -28,7 +28,14 @@ export const CommandPalette = ({
   const [showingStoryList, setShowingStoryList] = useState(false)
   const [deleteMode, setDeleteMode] = useState(false)
   const [storySelectedIndex, setStorySelectedIndex] = useState(0)
+  const [searchTerm, setSearchTerm] = useState('')
   const itemRefs = useRef<(HTMLButtonElement | null)[]>([])
+  const searchInputRef = useRef<HTMLInputElement>(null)
+
+  // Filter cards based on search term
+  const filteredCards = allCards.filter(card =>
+    card.title.toLowerCase().includes(searchTerm.toLowerCase())
+  )
 
   const commands = [
     {
@@ -54,6 +61,18 @@ export const CommandPalette = ({
     if (!isOpen) return
 
     const handleKeyDown = (event: KeyboardEvent) => {
+      // Allow Enter and Escape keys to work even when search input is focused
+      const isSearchInputFocused =
+        searchInputRef.current &&
+        document.activeElement === searchInputRef.current
+      if (
+        isSearchInputFocused &&
+        event.key !== 'Enter' &&
+        event.key !== 'Escape'
+      ) {
+        return
+      }
+
       if (showingStoryList || deleteMode) {
         if (event.key === 'Escape') {
           setShowingStoryList(false)
@@ -62,13 +81,22 @@ export const CommandPalette = ({
           return
         }
 
-        if (event.key === 'ArrowDown' || event.key === 'j') {
+        if (event.key === 'Tab' && event.shiftKey) {
           event.preventDefault()
-          setStorySelectedIndex(prev => (prev + 1) % allCards.length)
+          setStorySelectedIndex(
+            prev => (prev - 1 + filteredCards.length) % filteredCards.length
+          )
+        } else if (
+          event.key === 'ArrowDown' ||
+          event.key === 'j' ||
+          event.key === 'Tab'
+        ) {
+          event.preventDefault()
+          setStorySelectedIndex(prev => (prev + 1) % filteredCards.length)
         } else if (event.key === 'ArrowUp' || event.key === 'k') {
           event.preventDefault()
           setStorySelectedIndex(
-            prev => (prev - 1 + allCards.length) % allCards.length
+            prev => (prev - 1 + filteredCards.length) % filteredCards.length
           )
         } else if (event.key === 'h') {
           // VIM: go back from card selection
@@ -79,16 +107,24 @@ export const CommandPalette = ({
         } else if (event.key === 'Enter') {
           event.preventDefault()
           if (deleteMode) {
+            const cardToDelete =
+              filteredCards.length === 1
+                ? filteredCards[0]
+                : filteredCards[storySelectedIndex]
             if (
               window.confirm(
-                `Are you sure you want to delete "${allCards[storySelectedIndex].title}"?`
+                `Are you sure you want to delete "${cardToDelete.title}"?`
               )
             ) {
-              onDeleteAnyCard(allCards[storySelectedIndex].id)
+              onDeleteAnyCard(cardToDelete.id)
               onClose()
             }
           } else {
-            onSelectCard(allCards[storySelectedIndex].id)
+            const cardToOpen =
+              filteredCards.length === 1
+                ? filteredCards[0]
+                : filteredCards[storySelectedIndex]
+            onSelectCard(cardToOpen.id)
             onClose()
           }
         }
@@ -98,7 +134,16 @@ export const CommandPalette = ({
           return
         }
 
-        if (event.key === 'ArrowDown' || event.key === 'j') {
+        if (event.key === 'Tab' && event.shiftKey) {
+          event.preventDefault()
+          setSelectedIndex(
+            prev => (prev - 1 + commands.length) % commands.length
+          )
+        } else if (
+          event.key === 'ArrowDown' ||
+          event.key === 'j' ||
+          event.key === 'Tab'
+        ) {
           event.preventDefault()
           setSelectedIndex(prev => (prev + 1) % commands.length)
         } else if (event.key === 'ArrowUp' || event.key === 'k') {
@@ -132,7 +177,7 @@ export const CommandPalette = ({
     showingStoryList,
     deleteMode,
     storySelectedIndex,
-    allCards,
+    filteredCards,
     onSelectCard,
     onDeleteAnyCard,
   ])
@@ -142,8 +187,16 @@ export const CommandPalette = ({
     setShowingStoryList(false)
     setDeleteMode(false)
     setStorySelectedIndex(0)
+    setSearchTerm('')
     itemRefs.current = []
   }, [isOpen])
+
+  // Focus search input when entering card selection mode
+  useEffect(() => {
+    if ((showingStoryList || deleteMode) && searchInputRef.current) {
+      searchInputRef.current.focus()
+    }
+  }, [showingStoryList, deleteMode])
 
   // Scroll selected item into view
   useEffect(() => {
@@ -172,41 +225,54 @@ export const CommandPalette = ({
                 : 'Command Palette'}
           </div>
           {showingStoryList || deleteMode ? (
-            <div className="max-h-96 overflow-y-auto">
-              <div className="space-y-1">
-                {allCards.map((card, index) => (
-                  <button
-                    key={card.id}
-                    ref={el => (itemRefs.current[index] = el)}
-                    onClick={() => {
-                      if (deleteMode) {
-                        if (
-                          window.confirm(
-                            `Are you sure you want to delete "${card.title}"?`
-                          )
-                        ) {
-                          onDeleteAnyCard(card.id)
+            <>
+              <input
+                ref={searchInputRef}
+                type="text"
+                placeholder="Search cards..."
+                value={searchTerm}
+                onChange={e => {
+                  setSearchTerm(e.target.value)
+                  setStorySelectedIndex(0) // Reset selection when searching
+                }}
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-3"
+              />
+              <div className="max-h-96 overflow-y-auto">
+                <div className="space-y-1">
+                  {filteredCards.map((card, index) => (
+                    <button
+                      key={card.id}
+                      ref={el => (itemRefs.current[index] = el)}
+                      onClick={() => {
+                        if (deleteMode) {
+                          if (
+                            window.confirm(
+                              `Are you sure you want to delete "${card.title}"?`
+                            )
+                          ) {
+                            onDeleteAnyCard(card.id)
+                            onClose()
+                          }
+                        } else {
+                          onSelectCard(card.id)
                           onClose()
                         }
-                      } else {
-                        onSelectCard(card.id)
-                        onClose()
-                      }
-                    }}
-                    className={`w-full text-left px-3 py-2 rounded-md transition-colors ${
-                      index === storySelectedIndex
-                        ? 'bg-blue-100 dark:bg-blue-900 text-blue-900 dark:text-blue-100'
-                        : 'hover:bg-gray-100 dark:hover:bg-gray-700'
-                    }`}
-                  >
-                    <div className="font-medium">{card.title}</div>
-                    <div className="text-xs text-gray-500 dark:text-gray-400 capitalize">
-                      {card.column.replace('-', ' ')}
-                    </div>
-                  </button>
-                ))}
+                      }}
+                      className={`w-full text-left px-3 py-2 rounded-md transition-colors ${
+                        index === storySelectedIndex
+                          ? 'bg-blue-100 dark:bg-blue-900 text-blue-900 dark:text-blue-100'
+                          : 'hover:bg-gray-100 dark:hover:bg-gray-700'
+                      }`}
+                    >
+                      <div className="font-medium">{card.title}</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400 capitalize">
+                        {card.column.replace('-', ' ')}
+                      </div>
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
+            </>
           ) : (
             <div className="space-y-1">
               {commands.map((command, index) => (
@@ -236,8 +302,8 @@ export const CommandPalette = ({
           )}
           <div className="text-xs text-gray-400 dark:text-gray-500 mt-3">
             {showingStoryList || deleteMode
-              ? 'Use ↑↓/jk to navigate, Enter to select, Esc/h to go back'
-              : 'Use ↑↓/jk to navigate, Enter to select, Esc to close'}
+              ? 'Use ↑↓/jk/Tab to navigate, Enter to select, Esc/h to go back'
+              : 'Use ↑↓/jk/Tab to navigate, Enter to select, Esc to close'}
           </div>
         </div>
       </div>

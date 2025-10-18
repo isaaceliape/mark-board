@@ -8,16 +8,40 @@ A visual kanban board application that manages tasks using markdown files organi
 
 ## Features
 
+### Core Functionality
+
 - 📁 File-based storage with markdown files
 - 🔄 Real-time file system synchronization
 - 🖱️ Drag and drop cards between columns
-- ✏️ Inline editing with markdown support
+- ✏️ Modal-based card creation and editing
 - 🏷️ Support for tags, assignees, and due dates
+- 🔍 Advanced search and filtering by title, content, tags, and assignees
+- 🎨 Dark/light theme support with system preference detection
+
+### AI-Powered Features
+
 - 🤖 AI-powered user story co-creator with chat interface
 - 🔄 One-click card editing with AI assistance
 - 📝 Live markdown preview and formatting shortcuts
 - 💬 Context-aware AI conversations for story refinement
-- 🎨 Dark/light theme support
+- ⚙️ Configurable AI integration with OpenAI
+
+### Keyboard & Navigation
+
+- ⌨️ Comprehensive keyboard shortcuts (n, e, Delete, arrows, Esc)
+- 🎯 Command palette with Cmd+K (Ctrl+K) activation
+- 🗂️ Quick card navigation and selection from command palette
+- 🗑️ Delete any card with confirmation from command palette
+- ✏️ Create new cards via command palette
+- 🐧 VIM-style navigation (j/k for up/down, h for back)
+- 📜 Auto-scrolling in card selection lists
+
+### Performance & UX
+
+- ⚡ Optimized rendering with React.memo and useMemo
+- 🔄 Debounced search and file operations
+- 🎯 Smooth scrolling and keyboard navigation
+- 📱 Responsive design for different screen sizes
 
 ## Getting Started
 
