@@ -13,6 +13,7 @@ import { Card as CardType } from '../types'
 import { Column } from './Column'
 import { Card } from './Card'
 import { CardEditor } from './CardEditor'
+import { CardPreviewModal } from './CardPreviewModal'
 import { CommandPalette } from './CommandPalette'
 import { useBoardStore } from '../stores/boardStore'
 import { fsAPI } from '../utils/fileOperations'
@@ -37,6 +38,7 @@ export const Board = () => {
     setSelectedCard,
   } = useBoardStore()
   const [activeCard, setActiveCard] = useState<CardType | null>(null)
+  const [previewingCard, setPreviewingCard] = useState<CardType | null>(null)
   const [editingCard, setEditingCard] = useState<CardType | null>(null)
   const [creatingCard, setCreatingCard] = useState<{ columnId: string } | null>(
     null
@@ -191,6 +193,16 @@ export const Board = () => {
     setEditingCard(null)
   }
 
+  const handleOpenPreviewModal = useCallback(
+    (cardId: string) => {
+      const card = columns.flatMap(col => col.cards).find(c => c.id === cardId)
+      if (card) {
+        setPreviewingCard(card)
+      }
+    },
+    [columns]
+  )
+
   const handleOpenEditModal = useCallback(
     (cardId: string) => {
       const card = columns.flatMap(col => col.cards).find(c => c.id === cardId)
@@ -212,6 +224,13 @@ export const Board = () => {
       if (editingCard) {
         if (event.key === 'Escape') {
           setEditingCard(null)
+        }
+        return
+      }
+
+      if (previewingCard) {
+        if (event.key === 'Escape') {
+          setPreviewingCard(null)
         }
         return
       }
@@ -272,6 +291,7 @@ export const Board = () => {
     return () => document.removeEventListener('keydown', handleKeyDown)
   }, [
     editingCard,
+    previewingCard,
     selectedCardId,
     allCardIds,
     addCard,
@@ -350,7 +370,7 @@ export const Board = () => {
             onOpenCreateModal={handleOpenCreateModal}
             onEditCard={handleEditCard}
             onDeleteCard={deleteCard}
-            onOpenEditModal={handleOpenEditModal}
+            onOpenPreviewModal={handleOpenPreviewModal}
           />
         ))}
       </div>
@@ -360,6 +380,23 @@ export const Board = () => {
           <Card card={activeCard} onEdit={() => {}} onDelete={() => {}} />
         ) : null}
       </DragOverlay>
+
+      {previewingCard && (
+        <CardPreviewModal
+          card={previewingCard}
+          onEdit={() => {
+            setEditingCard(previewingCard)
+            setPreviewingCard(null)
+          }}
+          onDelete={() => {
+            if (window.confirm('Are you sure you want to delete this card?')) {
+              deleteCard(previewingCard.id)
+              setPreviewingCard(null)
+            }
+          }}
+          onClose={() => setPreviewingCard(null)}
+        />
+      )}
 
       {editingCard && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -409,7 +446,7 @@ export const Board = () => {
         }}
         hasSelectedCard={!!selectedCardId}
         allCards={filteredColumns.flatMap(col => col.cards)}
-        onSelectCard={handleOpenEditModal}
+        onSelectCard={handleOpenPreviewModal}
         onDeleteAnyCard={deleteCard}
       />
     </DndContext>

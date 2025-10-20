@@ -21,7 +21,7 @@ interface ColumnProps {
     }
   ) => void
   onDeleteCard: (cardId: string) => void
-  onOpenEditModal?: (cardId: string) => void
+  onOpenPreviewModal?: (cardId: string) => void
 }
 
 export const Column = React.memo(function Column({
@@ -32,7 +32,7 @@ export const Column = React.memo(function Column({
   onOpenCreateModal,
   onEditCard,
   onDeleteCard,
-  onOpenEditModal,
+  onOpenPreviewModal,
 }: ColumnProps) {
   const [editingCardId, setEditingCardId] = useState<string | null>(null)
 
@@ -87,7 +87,7 @@ export const Column = React.memo(function Column({
                 key={card.id}
                 card={card}
                 selected={selectedCardId === card.id}
-                onEdit={() => onOpenEditModal && onOpenEditModal(card.id)}
+                onEdit={() => onOpenPreviewModal && onOpenPreviewModal(card.id)}
                 onDelete={() => onDeleteCard(card.id)}
               />
             )
