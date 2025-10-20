@@ -90,7 +90,16 @@ export const useBoardStore = create<BoardState>((set, get) => ({
 
       set(state => ({
         columns: state.columns.map(col =>
-          col.id === columnId ? { ...col, cards: [...col.cards, newCard] } : col
+          col.id === columnId
+            ? {
+                ...col,
+                cards: [...col.cards, newCard].sort((a, b) => {
+                  const aTime = new Date(a.metadata.updated).getTime()
+                  const bTime = new Date(b.metadata.updated).getTime()
+                  return bTime - aTime
+                }),
+              }
+            : col
         ),
       }))
     } catch (error) {
@@ -105,7 +114,6 @@ export const useBoardStore = create<BoardState>((set, get) => ({
   updateCard: async (cardId: string, updates: Partial<Card>) => {
     const { columns } = get()
 
-    // Find the card
     let targetCard: Card | null = null
     for (const column of columns) {
       const card = column.cards.find(c => c.id === cardId)
@@ -127,9 +135,13 @@ export const useBoardStore = create<BoardState>((set, get) => ({
       set(state => ({
         columns: state.columns.map(col => ({
           ...col,
-          cards: col.cards.map(card =>
-            card.id === cardId ? updatedCard : card
-          ),
+          cards: col.cards
+            .map(card => (card.id === cardId ? updatedCard : card))
+            .sort((a, b) => {
+              const aTime = new Date(a.metadata.updated).getTime()
+              const bTime = new Date(b.metadata.updated).getTime()
+              return bTime - aTime
+            }),
         })),
       }))
     } catch (error) {
@@ -178,7 +190,14 @@ export const useBoardStore = create<BoardState>((set, get) => ({
         if (col.id === targetColumnId) {
           return {
             ...col,
-            cards: [...col.cards, { ...targetCard, column: targetColumnId }],
+            cards: [
+              ...col.cards,
+              { ...targetCard, column: targetColumnId },
+            ].sort((a, b) => {
+              const aTime = new Date(a.metadata.updated).getTime()
+              const bTime = new Date(b.metadata.updated).getTime()
+              return bTime - aTime
+            }),
           }
         }
         return col
@@ -193,7 +212,13 @@ export const useBoardStore = create<BoardState>((set, get) => ({
           if (col.id === targetColumnId) {
             return {
               ...col,
-              cards: col.cards.map(c => (c.id === cardId ? updatedCard : c)),
+              cards: col.cards
+                .map(c => (c.id === cardId ? updatedCard : c))
+                .sort((a, b) => {
+                  const aTime = new Date(a.metadata.updated).getTime()
+                  const bTime = new Date(b.metadata.updated).getTime()
+                  return bTime - aTime
+                }),
             }
           }
           return col
@@ -267,7 +292,13 @@ export const useBoardStore = create<BoardState>((set, get) => ({
     set(state => ({
       columns: state.columns.map(col => ({
         ...col,
-        cards: cards.filter(card => card.column === col.id),
+        cards: cards
+          .filter(card => card.column === col.id)
+          .sort((a, b) => {
+            const aTime = new Date(a.metadata.updated).getTime()
+            const bTime = new Date(b.metadata.updated).getTime()
+            return bTime - aTime
+          }),
       })),
     }))
   },
