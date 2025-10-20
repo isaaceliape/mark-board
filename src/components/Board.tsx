@@ -286,7 +286,16 @@ export const Board = () => {
       setFsInitialized(true)
       loadCards()
     } catch (error) {
-      setError('Failed to access file system. Please try again.')
+      console.error('File system initialization error:', error)
+      if (error instanceof Error) {
+        setError(
+          `Failed to access file system: ${error.message}. Please ensure you select the kanban-data directory and it contains backlog, in-progress, and done subdirectories.`
+        )
+      } else {
+        setError(
+          'Failed to access file system. Please ensure you select the kanban-data directory.'
+        )
+      }
     }
   }
 

@@ -91,10 +91,10 @@ export const Card = React.memo(function Card({
         </h3>
         <button
           onClick={handleDelete}
-          className={`ml-2 text-xs px-2 py-1 rounded transition-colors ${
+          className={`ml-2 px-2 py-1 rounded transition-all font-semibold ${
             showDeleteConfirm
-              ? 'bg-red-500 text-white hover:bg-red-600'
-              : 'text-gray-400 hover:text-red-500'
+              ? 'bg-red-600 text-white hover:bg-red-700 shadow-lg scale-110 text-sm'
+              : 'bg-red-500 text-white hover:bg-red-600 text-xs shadow-md'
           }`}
           title={showDeleteConfirm ? 'Click again to confirm' : 'Delete card'}
           type="button"

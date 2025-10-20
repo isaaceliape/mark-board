@@ -55,6 +55,15 @@ export async function loadStoredFileSystem(): Promise<boolean> {
     const storedHandle = await getStoredDirectoryHandle()
     if (!storedHandle) return false
 
+    // Check if we still have permission
+    const permission = await storedHandle.queryPermission({
+      mode: 'readwrite',
+    })
+    if (permission !== 'granted') {
+      await clearStoredDirectory()
+      return false
+    }
+
     // Test permission by trying to access
     await storedHandle.getDirectoryHandle('backlog', { create: false })
 
@@ -114,6 +123,7 @@ export async function loadStoredFileSystem(): Promise<boolean> {
     return true
   } catch (error) {
     // Permission revoked or error, clear stored
+    console.error('Error loading stored file system:', error)
     await clearStoredDirectory()
     return false
   }
@@ -126,6 +136,15 @@ export async function initializeFileSystem(): Promise<void> {
       mode: 'readwrite',
       startIn: 'documents',
     })
+
+    // Verify the directory has the required subdirectories
+    try {
+      await directoryHandle.getDirectoryHandle('backlog', { create: false })
+    } catch (error) {
+      throw new Error(
+        'Selected directory must contain a "backlog" subdirectory. Please select the kanban-data folder.'
+      )
+    }
 
     // Store the handle
     await storeDirectoryHandle(directoryHandle)
