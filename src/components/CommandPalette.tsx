@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from 'react'
 import { Card as CardType } from '../types'
+import { useTheme } from '../hooks/useTheme'
 
 interface CommandPaletteProps {
   isOpen: boolean
@@ -31,6 +32,7 @@ export const CommandPalette = ({
   const [searchTerm, setSearchTerm] = useState('')
   const itemRefs = useRef<(HTMLButtonElement | null)[]>([])
   const searchInputRef = useRef<HTMLInputElement>(null)
+  const { theme, toggle: toggleTheme } = useTheme()
 
   // Filter cards based on search term
   const filteredCards = allCards.filter(card =>
@@ -42,18 +44,40 @@ export const CommandPalette = ({
       label: 'Open card',
       action: () => setShowingStoryList(true),
       enabled: true,
+      keywords: ['open', 'card', 'view'],
     },
-    { label: 'Delete card', action: () => setDeleteMode(true), enabled: true },
-    { label: 'Create card', action: onCreateCard, enabled: true },
+    {
+      label: 'Delete card',
+      action: () => setDeleteMode(true),
+      enabled: true,
+      keywords: ['delete', 'card', 'remove'],
+    },
+    {
+      label: 'Create card',
+      action: onCreateCard,
+      enabled: true,
+      keywords: ['create', 'card', 'new'],
+    },
     {
       label: 'Edit selected card',
       action: onEditCard,
       enabled: hasSelectedCard,
+      keywords: ['edit', 'selected', 'card'],
     },
     {
       label: 'Delete selected card',
       action: onDeleteCard,
       enabled: hasSelectedCard,
+      keywords: ['delete', 'selected', 'card'],
+    },
+    {
+      label: `Toggle Dark Theme (currently: ${theme})`,
+      action: () => {
+        toggleTheme()
+        onClose()
+      },
+      enabled: true,
+      keywords: ['toggle', 'dark', 'theme', 'light'],
     },
   ].filter(cmd => cmd.enabled)
 
