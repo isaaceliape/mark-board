@@ -71,7 +71,7 @@ export const CommandPalette = ({
       keywords: ['delete', 'selected', 'card'],
     },
     {
-      label: `Toggle Dark Theme (currently: ${theme})`,
+      label: 'Toggle Dark/Light theme',
       action: () => {
         toggleTheme()
         onClose()
