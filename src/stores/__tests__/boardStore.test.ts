@@ -280,6 +280,54 @@ describe('boardStore', () => {
       expect(state.columns[1].cards).toHaveLength(1)
       expect(state.columns[2].cards).toHaveLength(0)
     })
+
+    it('should sort cards by last updated timestamp (newest first)', () => {
+      const cardsWithDifferentDates = [
+        {
+          id: 'card-old',
+          title: 'Old Card',
+          content: 'Old content',
+          column: 'backlog',
+          filePath: './kanban-data/backlog/card-old.md',
+          metadata: {
+            created: new Date('2023-01-01T00:00:00.000Z'),
+            updated: new Date('2023-01-01T12:00:00.000Z'),
+          },
+        },
+        {
+          id: 'card-newest',
+          title: 'Newest Card',
+          content: 'Newest content',
+          column: 'backlog',
+          filePath: './kanban-data/backlog/card-newest.md',
+          metadata: {
+            created: new Date('2023-01-01T00:00:00.000Z'),
+            updated: new Date('2023-01-03T00:00:00.000Z'),
+          },
+        },
+        {
+          id: 'card-middle',
+          title: 'Middle Card',
+          content: 'Middle content',
+          column: 'backlog',
+          filePath: './kanban-data/backlog/card-middle.md',
+          metadata: {
+            created: new Date('2023-01-01T00:00:00.000Z'),
+            updated: new Date('2023-01-02T00:00:00.000Z'),
+          },
+        },
+      ]
+
+      useBoardStore.getState().syncFromFileSystem(cardsWithDifferentDates)
+
+      const state = useBoardStore.getState()
+      const backlogCards = state.columns[0].cards
+
+      expect(backlogCards).toHaveLength(3)
+      expect(backlogCards[0].id).toBe('card-newest')
+      expect(backlogCards[1].id).toBe('card-middle')
+      expect(backlogCards[2].id).toBe('card-old')
+    })
   })
 
   describe('setError', () => {
