@@ -1,15 +1,12 @@
 import fs from 'node:fs'
 import path from 'node:path'
-import { execSync } from 'node:child_process'
 
 const root = process.cwd()
 const docsDir = path.join(root, 'docs')
-const docsAssetsDir = path.join(root, 'docs', 'assets')
-const publicDir = path.join(root, 'public')
 const indexPath = path.join(root, 'index.html')
 
 function log(msg) {
-  process.stdout.write(`[clean-build] ${msg}\n`)
+  process.stdout.write(`[pre-build] ${msg}\n`)
 }
 
 // 1) Remove built assets directory in project root
@@ -33,24 +30,4 @@ try {
   log(`Warning: issue handling index.html: ${err?.message || err})`)
 }
 
-// 3) Copy public directory contents to docs/assets
-try {
-  if (fs.existsSync(publicDir)) {
-    fs.mkdirSync(docsAssetsDir, { recursive: true })
-    const files = fs.readdirSync(publicDir)
-    for (const file of files) {
-      const srcPath = path.join(publicDir, file)
-      const destPath = path.join(docsAssetsDir, file)
-      fs.copyFileSync(srcPath, destPath)
-    }
-    log(`Copied ${files.length} file(s) from ./public to ./docs/assets`)
-  } else {
-    log('No ./public directory found')
-  }
-} catch (err) {
-  log(
-    `Warning: failed copying ./public to ./docs/assets: ${err?.message || err}`
-  )
-}
-
-log('Clean completed')
+log('Pre-build completed')
