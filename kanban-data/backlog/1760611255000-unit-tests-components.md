@@ -1,12 +1,12 @@
 ---
-title: Unit Tests for Components
-created: 2025-10-16T10:42:00Z
-updated: 2025-10-16T10:42:00Z
-tags: [user-story, tests, unit-tests]
-assignee:
-dueDate:
+title: Unit Tests for all Components
+created: '2025-10-16T10:42:00.000Z'
+updated: '2025-10-20T08:43:24.071Z'
+tags:
+  - user-story
+  - tests
+  - unit-tests
 ---
-
 # Unit Tests for Components
 
 As a developer, I want comprehensive unit tests for the React components so that I can ensure the UI works correctly and prevent regressions.
