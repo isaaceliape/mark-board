@@ -239,6 +239,7 @@ export function CoCreator() {
                     hideToolbar={false}
                     visibleDragbar={false}
                     className="h-full"
+                    height="100vh"
                   />
                 </div>
               </div>
