@@ -32,7 +32,7 @@ export const CommandPalette = ({
   const [searchTerm, setSearchTerm] = useState('')
   const itemRefs = useRef<(HTMLButtonElement | null)[]>([])
   const searchInputRef = useRef<HTMLInputElement>(null)
-  const { theme, toggle: toggleTheme } = useTheme()
+  const { toggle: toggleTheme } = useTheme()
 
   // Filter cards based on search term
   const filteredCards = allCards.filter(card =>
