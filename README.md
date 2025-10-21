@@ -2,7 +2,7 @@
 
 A visual kanban board application that manages tasks using markdown files organized in folders.
 
-![Board Screenshot 1](public/Screenshot.png)
+![Board Screenshot 1](./public/Screenshot.png)
 
 ## Features
 
