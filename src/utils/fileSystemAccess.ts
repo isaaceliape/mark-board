@@ -131,6 +131,13 @@ export async function loadStoredFileSystem(): Promise<boolean> {
 
 export async function initializeFileSystem(): Promise<void> {
   try {
+    // Check if File System Access API is supported
+    if (!(window as any).showDirectoryPicker) {
+      throw new Error(
+        'File System Access API is not supported in this browser. Please use Chrome, Edge, or another Chromium-based browser.'
+      )
+    }
+
     // Request directory access
     const directoryHandle = await (window as any).showDirectoryPicker({
       mode: 'readwrite',

@@ -44,6 +44,7 @@ export const Board = () => {
     null
   )
   const [fsInitialized, setFsInitialized] = useState(false)
+  const [fsSupported, setFsSupported] = useState(true)
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false)
 
   // Filter cards based on search and filter criteria
@@ -112,6 +113,13 @@ export const Board = () => {
   )
 
   useEffect(() => {
+    // Check if File System Access API is supported
+    if (!(window as any).showDirectoryPicker) {
+      setFsSupported(false)
+      setFsInitialized(false)
+      return
+    }
+
     const load = async () => {
       if (!fsAPI) {
         const loaded = await loadStoredFileSystem()
@@ -323,15 +331,33 @@ export const Board = () => {
     return (
       <div className="flex items-center justify-center h-screen bg-gray-100 dark:bg-gray-900">
         <div className="text-center">
-          <p className="text-lg text-gray-700 dark:text-gray-200 mb-4">
-            Please select the kanban-data directory to get started.
-          </p>
-          <button
-            onClick={handleSelectDirectory}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-          >
-            Select Directory
-          </button>
+          {!fsSupported ? (
+            <>
+              <p className="text-lg text-red-600 dark:text-red-400 mb-4">
+                Browser Not Supported
+              </p>
+              <p className="text-gray-700 dark:text-gray-200 mb-4">
+                This app requires the File System Access API, which is only
+                available in Chromium-based browsers like Chrome or Edge.
+              </p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                Please open this app in Chrome, Edge, or another compatible
+                browser.
+              </p>
+            </>
+          ) : (
+            <>
+              <p className="text-lg text-gray-700 dark:text-gray-200 mb-4">
+                Please select the kanban-data directory to get started.
+              </p>
+              <button
+                onClick={handleSelectDirectory}
+                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              >
+                Select Directory
+              </button>
+            </>
+          )}
         </div>
       </div>
     )
