@@ -8,7 +8,7 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, root, '')
 
   const isDev = mode === 'development'
-  const base = isDev ? env.VITE_BASE || '/' : '/mark-board/'
+  const base = env.VITE_BASE || (isDev ? '/' : '/mark-board/')
 
   return {
     plugins: [react()],
