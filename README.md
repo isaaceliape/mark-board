@@ -4,8 +4,6 @@ A visual kanban board application that manages tasks using markdown files organi
 
 ![Board Screenshot 1](./public/Screenshot.png)
 
-### 🚀 [Live demo](https://isaaceliape.github.io/mark-board/)
-
 ## Features
 
 ### Core Functionality
