@@ -5,6 +5,7 @@
       "npm *": "deny",
       "npx *": "deny",
       "bun run dev": "deny",
+      "git push": "ask",
     }
   }
 }

@@ -92,7 +92,26 @@ Mark Board includes powerful AI-assisted features for creating and refining user
 
 ### ⚙️ Configuration
 
-Set your OpenAI API key as `VITE_OPENAI_API_KEY` for AI features. If unset, the app runs in mock mode for demonstration.
+To enable AI features, you need to configure your OpenAI API key:
+
+1. Create a `.env` file in the project root:
+
+   ```bash
+   touch .env
+   ```
+
+2. Add your OpenAI API key to the `.env` file:
+
+   ```
+   VITE_OPENAI_API_KEY=sk-your-api-key-here
+   ```
+
+3. Restart the development server:
+   ```bash
+   bun run dev
+   ```
+
+**Note**: If the API key is not set, the app runs in mock mode for demonstration purposes. The `.env` file is already in `.gitignore` to prevent accidental commits of your API key.
 
 ### 🎨 Theme Behavior
 
