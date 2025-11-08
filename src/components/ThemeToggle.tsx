@@ -1,18 +1,20 @@
 import { useTheme } from '../hooks/useTheme'
 
 export function ThemeToggle() {
-  const { theme, toggle } = useTheme()
+  const { currentTheme, toggleTheme } = useTheme()
 
   return (
     <button
       type="button"
-      onClick={toggle}
+      onClick={toggleTheme}
       aria-label={
-        theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'
+        currentTheme.type === 'dark'
+          ? 'Switch to light mode'
+          : 'Switch to dark mode'
       }
       className="inline-flex items-center gap-2 px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 transition"
     >
-      {theme === 'dark' ? (
+      {currentTheme.type === 'dark' ? (
         // Sun icon
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -39,7 +41,7 @@ export function ThemeToggle() {
         </svg>
       )}
       <span className="text-sm hidden sm:inline">
-        {theme === 'dark' ? 'Dark' : 'Light'}
+        {currentTheme.type === 'dark' ? 'Dark' : 'Light'}
       </span>
     </button>
   )

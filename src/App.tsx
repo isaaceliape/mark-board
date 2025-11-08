@@ -9,6 +9,7 @@ import {
 import { Board } from './components/Board'
 import { SearchFilter } from './components/SearchFilter'
 import { ThemeToggle } from './components/ThemeToggle'
+import { ThemeSelector } from './components/ThemeSelector'
 import { CoCreator } from './components/CoCreator'
 
 function Navigation() {
@@ -56,7 +57,10 @@ function App() {
             </div>
             <div className="flex items-center justify-between sm:justify-end space-x-4">
               <Navigation />
-              <ThemeToggle />
+              <div className="flex items-center space-x-2">
+                <ThemeSelector />
+                <ThemeToggle />
+              </div>
             </div>
           </div>
           <div className="mt-4">
