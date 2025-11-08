@@ -21,8 +21,10 @@ A visual kanban board application that manages tasks using markdown files organi
 - 🤖 AI-powered user story co-creator with chat interface
 - 🔄 One-click card editing with AI assistance
 - 📝 Live markdown preview and formatting shortcuts
-- 💬 Context-aware AI conversations for story refinement
-- ⚙️ Configurable AI integration with OpenAI
+- 💬 Context-aware AI conversations with automatic card context loading
+- 🔗 Support for multiple AI providers (OpenRouter & OpenAI)
+- 🧠 Access to premium models like Claude 3.5 Sonnet via OpenRouter
+- ⚙️ Configurable AI integration with environment-based provider selection
 
 ### Keyboard & Navigation
 
@@ -87,12 +89,17 @@ Mark Board includes powerful AI-assisted features for creating and refining user
 
 - **One-Click Editing**: Click the 🤖 icon on any card to open it in the co-creator
 - **Pre-loaded Content**: Existing card data is automatically loaded into the editor
-- **Context-Aware AI**: AI understands when you're editing existing cards
+- **Enhanced AI Context**: AI automatically receives card title, content preview, and metadata when editing
+- **Smart Conversations**: AI immediately understands the specific card being worked on
 - **Seamless Workflow**: Move between board view and AI editing effortlessly
 
 ### ⚙️ Configuration
 
-To enable AI features, you need to configure your OpenAI API key:
+Mark Board supports multiple AI providers for enhanced flexibility and access to premium models:
+
+#### Option 1: OpenRouter (Recommended)
+
+OpenRouter provides access to premium models like Claude 3.5 Sonnet, GPT-4, and others through a unified API.
 
 1. Create a `.env` file in the project root:
 
@@ -100,18 +107,41 @@ To enable AI features, you need to configure your OpenAI API key:
    touch .env
    ```
 
-2. Add your OpenAI API key to the `.env` file:
-
+2. Add your OpenRouter API key:
    ```
-   VITE_OPENAI_API_KEY=sk-your-api-key-here
-   ```
-
-3. Restart the development server:
-   ```bash
-   bun run dev
+   VITE_OPENROUTER_API_KEY=sk-or-v1-your-openrouter-key-here
    ```
 
-**Note**: If the API key is not set, the app runs in mock mode for demonstration purposes. The `.env` file is already in `.gitignore` to prevent accidental commits of your API key.
+#### Option 2: OpenAI (Legacy Support)
+
+Traditional OpenAI integration for GPT models.
+
+1. Add your OpenAI API key to the `.env` file:
+   ```
+   VITE_OPENAI_API_KEY=sk-your-openai-key-here
+   ```
+
+#### Priority & Fallback
+
+- OpenRouter takes priority if both API keys are configured
+- Falls back to OpenAI if OpenRouter is not available
+- Falls back to mock mode if neither is configured
+
+#### Smart Provider Selection
+
+The application automatically detects available providers and selects the best option:
+
+1. **OpenRouter** (Premium models, Claude 3.5 Sonnet)
+2. **OpenAI** (GPT models for compatibility)
+3. **Mock Mode** (Demonstration without API calls)
+
+**Security Note**: The `.env` file is already in `.gitignore` to prevent accidental commits of your API keys.
+
+**Restart Required**: After adding API keys, restart the development server:
+
+```bash
+bun run dev
+```
 
 ### 🎨 Theme Behavior
 
@@ -125,16 +155,16 @@ mark-board/
 │   ├── components/     # React components
 │   │   ├── Board.tsx   # Main kanban board
 │   │   ├── Card.tsx    # Individual cards with AI integration
-│   │   ├── CoCreator.tsx # AI-powered story editor
-│   │   ├── ChatInterface.tsx # AI chat component
+│   │   ├── CoCreator.tsx # AI-powered story editor with context
+│   │   ├── ChatInterface.tsx # AI chat component with provider support
 │   │   └── ...
 │   ├── hooks/          # Custom React hooks
 │   ├── utils/          # Utility functions
-│   │   ├── aiService.ts # AI provider integration
+│   │   ├── aiService.ts # Multi-provider AI service (OpenRouter/OpenAI)
 │   │   └── ...
 │   ├── stores/         # State management
 │   ├── types/          # TypeScript type definitions
-│   │   ├── ai.ts       # AI-related types
+│   │   ├── ai.ts       # AI-related types and templates
 │   │   └── ...
 │   └── types.ts        # Main type definitions
 ├── kanban-data/        # Markdown files storage
