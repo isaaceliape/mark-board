@@ -85,16 +85,7 @@ export function CoCreator() {
 
 ${cardContext.join('\n\n')}
 
-I'm ready to help you refine and improve it. You can ask me to:
-
-- Improve the acceptance criteria
-- Add more details or context
-- Refine the story format
-- Suggest additional test cases
-- Help with implementation notes
-- Restructure or reorganize the content
-
-What would you like to work on?`,
+I'm here to help you refine and improve it. What would you like to work on?`,
           timestamp: new Date(),
         }
         setMessages([systemMessage])

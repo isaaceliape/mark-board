@@ -489,16 +489,7 @@ ${Ct.join(`
 
 `)}
 
-I'm ready to help you refine and improve it. You can ask me to:
-
-- Improve the acceptance criteria
-- Add more details or context
-- Refine the story format
-- Suggest additional test cases
-- Help with implementation notes
-- Restructure or reorganize the content
-
-What would you like to work on?`,timestamp:new Date};nt([Ot])}}else{const It=localStorage.getItem("co-creator-messages"),Ct=localStorage.getItem("co-creator-content");if(It)try{nt(JSON.parse(It))}catch(Ot){console.error("Failed to parse saved messages:",Ot)}Ct&&et(Ct)}},[b]),reactExports.useEffect(()=>{localStorage.setItem("co-creator-messages",JSON.stringify(tt))},[tt]),reactExports.useEffect(()=>{localStorage.setItem("co-creator-content",_e)},[_e]);const ut=async(_t,ht)=>{at(!0),console.log("Using AI provider:",ht.name);const gt={id:Date.now().toString(),role:"user",content:_t,timestamp:new Date};nt(Et=>[...Et,gt]);try{const Et=await aiService.sendMessage([...tt,gt],ht),St={id:(Date.now()+1).toString(),role:"assistant",content:Et,timestamp:new Date};nt(yt=>[...yt,St])}catch(Et){console.error("Error sending message:",Et),zt.error("Failed to send message. Please try again.")}finally{at(!1)}},lt=_t=>{et(ht=>ht+`
+I'm here to help you refine and improve it. What would you like to work on?`,timestamp:new Date};nt([Ot])}}else{const It=localStorage.getItem("co-creator-messages"),Ct=localStorage.getItem("co-creator-content");if(It)try{nt(JSON.parse(It))}catch(Ot){console.error("Failed to parse saved messages:",Ot)}Ct&&et(Ct)}},[b]),reactExports.useEffect(()=>{localStorage.setItem("co-creator-messages",JSON.stringify(tt))},[tt]),reactExports.useEffect(()=>{localStorage.setItem("co-creator-content",_e)},[_e]);const ut=async(_t,ht)=>{at(!0),console.log("Using AI provider:",ht.name);const gt={id:Date.now().toString(),role:"user",content:_t,timestamp:new Date};nt(Et=>[...Et,gt]);try{const Et=await aiService.sendMessage([...tt,gt],ht),St={id:(Date.now()+1).toString(),role:"assistant",content:Et,timestamp:new Date};nt(yt=>[...yt,St])}catch(Et){console.error("Error sending message:",Et),zt.error("Failed to send message. Please try again.")}finally{at(!1)}},lt=_t=>{et(ht=>ht+`
 
 `+_t),zt.success("Content inserted into editor")},ct=_t=>{et(_t),zt.success("Editor content replaced")},pt=()=>{nt([]),localStorage.removeItem("co-creator-messages"),zt.success("Conversation reset")},ft=()=>{const _t=tt.map(St=>`[${St.timestamp.toLocaleString()}] ${St.role.toUpperCase()}: ${St.content}`).join(`
 

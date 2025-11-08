@@ -23,7 +23,7 @@ As a product owner using the co-create page, I want the AI to automatically unde
 - [ ] AI system message includes comprehensive card context
 - [ ] Context is properly formatted with markdown styling for clarity
 - [ ] AI acknowledges the specific card being worked on
-- [ ] System message provides relevant suggestions based on card content
+- [ ] System message keeps the greeting concise without generic suggestions
 
 ### User Experience
 
