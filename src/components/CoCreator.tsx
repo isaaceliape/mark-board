@@ -58,12 +58,43 @@ export function CoCreator() {
 
       setEditorContent(prefilledContent)
 
-      // Add a system message about editing existing card
-      if (cardId) {
+      // Add a system message about editing existing card with context
+      if (cardId && (title || content)) {
+        const cardContext = []
+        if (title) {
+          cardContext.push(`**Card Title:** ${title}`)
+        }
+        if (content) {
+          // Take first 500 characters of content for context to avoid token limits
+          const contentPreview =
+            content.length > 500 ? content.substring(0, 500) + '...' : content
+          cardContext.push(`**Card Content:**\n${contentPreview}`)
+        }
+        if (tags || assignee || dueDate) {
+          const metadata = []
+          if (tags) metadata.push(`tags: ${tags}`)
+          if (assignee) metadata.push(`assignee: ${assignee}`)
+          if (dueDate) metadata.push(`due date: ${dueDate}`)
+          cardContext.push(`**Metadata:** ${metadata.join(', ')}`)
+        }
+
         const systemMessage: AIMessage = {
           id: 'system-edit-context',
           role: 'assistant',
-          content: `I'm ready to help you refine this existing user story. You can ask me to:\n\n- Improve the acceptance criteria\n- Add more details or context\n- Refine the story format\n- Suggest additional test cases\n- Help with implementation notes\n\nWhat would you like to work on?`,
+          content: `I can see you're working on this user story:
+
+${cardContext.join('\n\n')}
+
+I'm ready to help you refine and improve it. You can ask me to:
+
+- Improve the acceptance criteria
+- Add more details or context
+- Refine the story format
+- Suggest additional test cases
+- Help with implementation notes
+- Restructure or reorganize the content
+
+What would you like to work on?`,
           timestamp: new Date(),
         }
         setMessages([systemMessage])
