@@ -470,9 +470,11 @@ https://help.openai.com/en/articles/5112595-best-practices-for-api-key-safety
 - [ ] Criterion 2
 - [ ] Criterion 3
 
-Would you like me to help you fill in the details for your specific requirement?`}}const aiService=new AIService;function CoCreator(){const[b]=useSearchParams(),[_e,et]=reactExports.useState(""),[tt,nt]=reactExports.useState([]),[rt,at]=reactExports.useState(!1),[it,st]=reactExports.useState(null),ot=useBoardStore(_t=>_t.updateCard);reactExports.useEffect(()=>{const _t=b.get("cardId"),ht=b.get("title"),gt=b.get("content"),Et=b.get("tags"),St=b.get("assignee"),yt=b.get("dueDate");if(ht||gt){st(_t);let It="";ht&&(It+=`# ${ht}
+Would you like me to help you fill in the details for your specific requirement?`}}const aiService=new AIService;function CoCreator(){const[b]=useSearchParams(),[_e,et]=reactExports.useState(""),[tt,nt]=reactExports.useState([]),[rt,at]=reactExports.useState(!1),[it,st]=reactExports.useState(null),ot=useBoardStore(_t=>_t.updateCard);reactExports.useEffect(()=>{const _t=b.get("cardId"),ht=b.get("title"),gt=b.get("content"),Et=b.get("tags"),St=b.get("assignee"),yt=b.get("dueDate");if(ht||gt){st(_t);let It="";gt?(!(ht&&gt.trim().startsWith(`# ${ht}`))&&ht&&(It+=`# ${ht}
 
-`),gt&&(It+=`${gt}
+`),It+=`${gt}
+
+`):ht&&(It+=`# ${ht}
 
 `),(Et||St||yt)&&(It+=`---
 `,Et&&(It+=`tags: [${Et}]

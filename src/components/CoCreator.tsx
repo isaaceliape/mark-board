@@ -32,12 +32,19 @@ export function CoCreator() {
 
       let prefilledContent = ''
 
-      if (title) {
-        prefilledContent += `# ${title}\n\n`
-      }
-
       if (content) {
+        // Check if content already starts with an H1 heading that matches the title
+        const contentStartsWithTitle =
+          title && content.trim().startsWith(`# ${title}`)
+
+        if (!contentStartsWithTitle && title) {
+          prefilledContent += `# ${title}\n\n`
+        }
+
         prefilledContent += `${content}\n\n`
+      } else if (title) {
+        // Only title, no content
+        prefilledContent += `# ${title}\n\n`
       }
 
       // Add metadata if available
