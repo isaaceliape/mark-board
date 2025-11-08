@@ -46,8 +46,14 @@ export function ChatInterface({
       : input
 
     const provider: AIProvider = {
-      name: import.meta.env.VITE_AI_API_KEY ? 'openai' : 'mock',
-      apiKey: import.meta.env.VITE_AI_API_KEY,
+      name: import.meta.env.VITE_OPENROUTER_API_KEY
+        ? 'openrouter'
+        : import.meta.env.VITE_OPENAI_API_KEY
+          ? 'openai'
+          : 'mock',
+      apiKey:
+        import.meta.env.VITE_OPENROUTER_API_KEY ||
+        import.meta.env.VITE_OPENAI_API_KEY,
     }
 
     await onSendMessage(content, provider)
