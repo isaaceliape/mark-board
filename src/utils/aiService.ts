@@ -1,105 +1,46 @@
-import OpenAI from 'openai'
 import { AIMessage, AIProvider } from '../types/ai'
 
 export class AIService {
-  private openai: OpenAI | null = null
-  private openrouter: OpenAI | null = null
+  private baseUrl: string
 
   constructor() {
-    // Initialize OpenAI client if key provided
-    if (import.meta.env.VITE_OPENAI_API_KEY) {
-      this.openai = new OpenAI({
-        apiKey: import.meta.env.VITE_OPENAI_API_KEY,
-        dangerouslyAllowBrowser: true, // Note: In production, this should be handled server-side
-      })
-    }
-
-    // Initialize OpenRouter client if key provided
-    if (import.meta.env.VITE_OPENROUTER_API_KEY) {
-      this.openrouter = new OpenAI({
-        apiKey: import.meta.env.VITE_OPENROUTER_API_KEY,
-        baseURL: 'https://openrouter.ai/api/v1',
-        dangerouslyAllowBrowser: true,
-      })
-    }
+    // Use environment variable for API base URL
+    this.baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001'
   }
 
   async sendMessage(
     messages: AIMessage[],
     provider: AIProvider
   ): Promise<string> {
-    if (provider.name === 'mock' || (!this.openai && !this.openrouter)) {
+    if (provider.name === 'mock') {
       return this.getMockResponse(messages)
     }
 
-    if (provider.name === 'openai' && this.openai) {
-      return this.sendOpenAIMessage(messages)
-    }
-
-    if (provider.name === 'openrouter' && this.openrouter) {
-      return this.sendOpenRouterMessage(messages)
-    }
-
-    throw new Error(`Unsupported AI provider: ${provider.name}`)
-  }
-
-  private async sendOpenRouterMessage(messages: AIMessage[]): Promise<string> {
-    if (!this.openrouter) {
-      throw new Error('OpenRouter client not initialized')
-    }
-
     try {
-      const openrouterMessages = messages.map(msg => ({
-        role: msg.role as 'user' | 'assistant' | 'system',
-        content: msg.content,
-      }))
-
-      const response = await this.openrouter.chat.completions.create({
-        model: 'anthropic/claude-3.5-sonnet', // Using a high-quality model through OpenRouter
-        messages: openrouterMessages,
-        max_tokens: 2000,
-        temperature: 0.7,
+      const response = await fetch(`${this.baseUrl}/api/chat`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          messages,
+          provider: provider.name,
+        }),
       })
 
-      const content = response.choices[0]?.message?.content
-      if (!content) {
-        throw new Error('No content received from OpenRouter')
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || `HTTP ${response.status}`)
       }
 
-      return content
+      const data = await response.json()
+      return data.content
     } catch (error) {
-      console.error('OpenRouter API error:', error)
-      throw new Error('Failed to get response from OpenRouter service')
-    }
-  }
+      console.error('AI API error:', error)
 
-  private async sendOpenAIMessage(messages: AIMessage[]): Promise<string> {
-    if (!this.openai) {
-      throw new Error('OpenAI client not initialized')
-    }
-
-    try {
-      const openaiMessages = messages.map(msg => ({
-        role: msg.role as 'user' | 'assistant' | 'system',
-        content: msg.content,
-      }))
-
-      const response = await this.openai.chat.completions.create({
-        model: 'gpt-4o-mini', // Using a cost-effective model
-        messages: openaiMessages,
-        max_tokens: 2000,
-        temperature: 0.7,
-      })
-
-      const content = response.choices[0]?.message?.content
-      if (!content) {
-        throw new Error('No content received from OpenAI')
-      }
-
-      return content
-    } catch (error) {
-      console.error('OpenAI API error:', error)
-      throw new Error('Failed to get response from AI service')
+      // Fall back to mock response if server is unavailable
+      console.warn('Falling back to mock response due to server error')
+      return this.getMockResponse(messages)
     }
   }
 

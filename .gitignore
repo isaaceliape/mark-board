@@ -2,9 +2,27 @@
 logs
 *.log
 npm-debug.log*
-
 node_modules
 
-# Environment files
+# Environment files - protect ALL .env files except .env.example
 .env*
-*.local
+!.env.example
+
+# Build outputs
+dist
+docs
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Testing
+coverage
+.nyc_output
