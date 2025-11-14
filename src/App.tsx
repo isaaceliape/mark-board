@@ -21,8 +21,8 @@ function Navigation() {
         to="/"
         className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
           location.pathname === '/'
-            ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
-            : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100'
+            ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300'
+            : 'text-text-secondary hover:text-primary-600 dark:hover:text-primary-400'
         }`}
       >
         Board
@@ -31,8 +31,8 @@ function Navigation() {
         to="/co-create"
         className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
           location.pathname === '/co-create'
-            ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
-            : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100'
+            ? 'bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300'
+            : 'text-text-secondary hover:text-accent-600 dark:hover:text-accent-400'
         }`}
       >
         Co-Create
@@ -44,14 +44,14 @@ function Navigation() {
 function App() {
   return (
     <Router>
-      <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
-        <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 px-4 sm:px-6 py-4">
+      <div className="min-h-screen bg-background-primary">
+        <header className="bg-background-elevated shadow-sm border-b border-gray-200 dark:border-gray-700 px-4 sm:px-6 py-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
+              <h1 className="text-xl sm:text-2xl font-bold text-text-primary">
                 Mark Board
               </h1>
-              <p className="text-sm text-gray-600 dark:text-gray-300">
+              <p className="text-sm text-text-secondary">
                 Markdown-powered Kanban Board
               </p>
             </div>

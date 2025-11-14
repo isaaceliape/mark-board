@@ -1,11 +1,15 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { AppTheme, getThemeById, getAutoTheme, allThemes } from '../themes'
+import { AppTheme, getThemeById, getAutoTheme } from '../themes'
 
 interface ThemeState {
   // Current theme
   currentTheme: AppTheme
   customThemes: AppTheme[]
+
+  // User-selected themes for light/dark modes
+  selectedLightThemeId: string | null
+  selectedDarkThemeId: string | null
 
   // System preferences
   hasManualOverride: boolean
@@ -13,6 +17,8 @@ interface ThemeState {
   // Actions
   setTheme: (themeId: string) => void
   setAutoTheme: () => void
+  setLightTheme: (themeId: string) => void
+  setDarkTheme: (themeId: string) => void
   addCustomTheme: (theme: AppTheme) => void
   removeCustomTheme: (themeId: string) => void
   toggleTheme: () => void
@@ -23,6 +29,16 @@ interface ThemeState {
 function getStoredThemeId(): string | null {
   if (typeof window === 'undefined') return null
   return window.localStorage.getItem('markboard-theme-id')
+}
+
+function getStoredLightThemeId(): string | null {
+  if (typeof window === 'undefined') return null
+  return window.localStorage.getItem('markboard-light-theme-id')
+}
+
+function getStoredDarkThemeId(): string | null {
+  if (typeof window === 'undefined') return null
+  return window.localStorage.getItem('markboard-dark-theme-id')
 }
 
 function applyThemeToDOM(theme: AppTheme) {
@@ -309,6 +325,8 @@ export const useThemeStore = create<ThemeState>()(
       return {
         currentTheme: initialTheme,
         customThemes: [],
+        selectedLightThemeId: getStoredLightThemeId() || 'light-default',
+        selectedDarkThemeId: getStoredDarkThemeId() || 'dark-default',
         hasManualOverride: storedThemeId !== null,
 
         setTheme: (themeId: string) => {
@@ -326,7 +344,16 @@ export const useThemeStore = create<ThemeState>()(
         },
 
         setAutoTheme: () => {
-          const autoTheme = getAutoTheme()
+          const prefersDark =
+            typeof window !== 'undefined' &&
+            window.matchMedia &&
+            window.matchMedia('(prefers-color-scheme: dark)').matches
+
+          const selectedThemeId = prefersDark
+            ? get().selectedDarkThemeId || 'dark-default'
+            : get().selectedLightThemeId || 'light-default'
+
+          const autoTheme = getThemeById(selectedThemeId) || getAutoTheme()
 
           set({
             currentTheme: autoTheme,
@@ -352,22 +379,24 @@ export const useThemeStore = create<ThemeState>()(
         },
 
         toggleTheme: () => {
-          const { currentTheme } = get()
-          const availableThemes = [...allThemes, ...get().customThemes]
+          const { currentTheme, selectedLightThemeId, selectedDarkThemeId } =
+            get()
 
-          // Find next theme in the same type group
-          const currentIndex = availableThemes.findIndex(
-            t => t.id === currentTheme.id
-          )
-          const nextIndex = (currentIndex + 1) % availableThemes.length
-          const nextTheme = availableThemes[nextIndex]
-
-          get().setTheme(nextTheme.id)
+          if (currentTheme.type === 'dark') {
+            // Switch to selected light theme
+            const lightThemeId = selectedLightThemeId || 'light-default'
+            get().setTheme(lightThemeId)
+          } else {
+            // Switch to selected dark theme
+            const darkThemeId = selectedDarkThemeId || 'dark-default'
+            get().setTheme(darkThemeId)
+          }
         },
 
-        importITerm2Scheme: (_schemeText: string) => {
+        importITerm2Scheme: () => {
           try {
             // This is a simplified parser - in production you'd use a proper XML parser
+            // For now, we ignore the schemeText and return a basic theme
             const theme = parseITerm2Scheme()
             if (theme) {
               get().addCustomTheme(theme)
@@ -375,6 +404,42 @@ export const useThemeStore = create<ThemeState>()(
             }
           } catch (error) {
             console.error('Failed to import iTerm2 color scheme:', error)
+          }
+        },
+
+        setLightTheme: (themeId: string) => {
+          const theme = getThemeById(themeId)
+          if (theme && theme.type === 'light') {
+            set({ selectedLightThemeId: themeId })
+            if (typeof window !== 'undefined') {
+              window.localStorage.setItem('markboard-light-theme-id', themeId)
+            }
+            // If currently in auto mode and system is light, apply the new theme
+            const prefersLight =
+              typeof window !== 'undefined' &&
+              window.matchMedia &&
+              window.matchMedia('(prefers-color-scheme: light)').matches
+            if (!get().hasManualOverride && prefersLight) {
+              get().setAutoTheme()
+            }
+          }
+        },
+
+        setDarkTheme: (themeId: string) => {
+          const theme = getThemeById(themeId)
+          if (theme && theme.type === 'dark') {
+            set({ selectedDarkThemeId: themeId })
+            if (typeof window !== 'undefined') {
+              window.localStorage.setItem('markboard-dark-theme-id', themeId)
+            }
+            // If currently in auto mode and system is dark, apply the new theme
+            const prefersDark =
+              typeof window !== 'undefined' &&
+              window.matchMedia &&
+              window.matchMedia('(prefers-color-scheme: dark)').matches
+            if (!get().hasManualOverride && prefersDark) {
+              get().setAutoTheme()
+            }
           }
         },
 
@@ -389,6 +454,8 @@ export const useThemeStore = create<ThemeState>()(
       partialize: (state: ThemeState) => ({
         currentTheme: state.currentTheme,
         customThemes: state.customThemes,
+        selectedLightThemeId: state.selectedLightThemeId,
+        selectedDarkThemeId: state.selectedDarkThemeId,
         hasManualOverride: state.hasManualOverride,
       }),
     }

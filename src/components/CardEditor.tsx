@@ -167,7 +167,7 @@ export const CardEditor = ({ card, onSave, onCancel }: CardEditorProps) => {
   return (
     <div
       ref={editorRef}
-      className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg p-4 space-y-4"
+      className="bg-background-elevated border border-border-medium rounded-lg shadow-lg p-4 space-y-4"
     >
       <div>
         <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
@@ -177,18 +177,16 @@ export const CardEditor = ({ card, onSave, onCancel }: CardEditorProps) => {
           type="text"
           value={title}
           onChange={e => handleFieldChange('title', e.target.value)}
-          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 ${
+          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 bg-background-primary text-text-primary ${
             errors.title
-              ? 'border-red-500 focus:ring-red-500'
-              : 'border-gray-300 dark:border-gray-700 focus:ring-blue-500'
+              ? 'border-status-error focus:ring-status-error'
+              : 'border-border-medium focus:ring-primary-500'
           }`}
           placeholder="Card title"
           autoFocus
         />
         {errors.title && (
-          <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-            {errors.title}
-          </p>
+          <p className="mt-1 text-sm text-status-error">{errors.title}</p>
         )}
       </div>
 
@@ -199,7 +197,7 @@ export const CardEditor = ({ card, onSave, onCancel }: CardEditorProps) => {
         <textarea
           value={content}
           onChange={e => setContent(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+          className="w-full px-3 py-2 border border-border-medium rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 font-mono text-sm bg-background-primary text-text-primary"
           placeholder="Write your markdown content here..."
           rows={8}
         />
@@ -213,22 +211,20 @@ export const CardEditor = ({ card, onSave, onCancel }: CardEditorProps) => {
           type="text"
           value={tags}
           onChange={e => handleFieldChange('tags', e.target.value)}
-          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 ${
+          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 bg-background-primary text-text-primary ${
             errors.tags
-              ? 'border-red-500 focus:ring-red-500'
-              : 'border-gray-300 dark:border-gray-700 focus:ring-blue-500'
+              ? 'border-status-error focus:ring-status-error'
+              : 'border-border-medium focus:ring-primary-500'
           }`}
           placeholder="tag1, tag2, tag3"
         />
         {errors.tags && (
-          <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-            {errors.tags}
-          </p>
+          <p className="mt-1 text-sm text-status-error">{errors.tags}</p>
         )}
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
+        <label className="block text-sm font-medium text-text-secondary mb-1">
           Assignee
         </label>
         <input
@@ -243,24 +239,22 @@ export const CardEditor = ({ card, onSave, onCancel }: CardEditorProps) => {
           placeholder="Username"
         />
         {errors.assignee && (
-          <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-            {errors.assignee}
-          </p>
+          <p className="mt-1 text-sm text-status-error">{errors.assignee}</p>
         )}
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
+        <label className="block text-sm font-medium text-text-secondary mb-1">
           Due Date
         </label>
         <input
           type="date"
           value={dueDate}
           onChange={e => handleFieldChange('dueDate', e.target.value)}
-          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 ${
+          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 bg-background-primary text-text-primary ${
             errors.dueDate
-              ? 'border-red-500 focus:ring-red-500'
-              : 'border-gray-300 dark:border-gray-700 focus:ring-blue-500'
+              ? 'border-status-error focus:ring-status-error'
+              : 'border-border-medium focus:ring-primary-500'
           }`}
         />
         {errors.dueDate && (
@@ -276,8 +270,8 @@ export const CardEditor = ({ card, onSave, onCancel }: CardEditorProps) => {
           disabled={Object.keys(errors).length > 0}
           className={`flex-1 px-4 py-2 rounded-md focus:outline-none focus:ring-2 ${
             Object.keys(errors).length > 0
-              ? 'bg-gray-400 text-gray-200 cursor-not-allowed'
-              : 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500'
+              ? 'bg-border-dark text-text-muted cursor-not-allowed'
+              : 'bg-primary-600 text-text-inverse hover:bg-primary-700 focus:ring-primary-500'
           }`}
         >
           {card ? 'Save' : 'Create Card'}

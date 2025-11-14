@@ -329,30 +329,30 @@ export const Board = () => {
 
   if (!fsInitialized) {
     return (
-      <div className="flex items-center justify-center h-screen bg-gray-100 dark:bg-gray-900">
+      <div className="flex items-center justify-center h-screen bg-background-primary">
         <div className="text-center">
           {!fsSupported ? (
             <>
-              <p className="text-lg text-red-600 dark:text-red-400 mb-4">
+              <p className="text-lg text-status-error mb-4">
                 Browser Not Supported
               </p>
-              <p className="text-gray-700 dark:text-gray-200 mb-4">
+              <p className="text-text-primary mb-4">
                 This app requires the File System Access API, which is only
                 available in Chromium-based browsers like Chrome or Edge.
               </p>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
+              <p className="text-sm text-text-muted">
                 Please open this app in Chrome, Edge, or another compatible
                 browser.
               </p>
             </>
           ) : (
             <>
-              <p className="text-lg text-gray-700 dark:text-gray-200 mb-4">
+              <p className="text-lg text-text-primary mb-4">
                 Please select the kanban-data directory to get started.
               </p>
               <button
                 onClick={handleSelectDirectory}
-                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                className="px-4 py-2 bg-primary-600 text-text-inverse rounded hover:bg-primary-700"
               >
                 Select Directory
               </button>
@@ -365,16 +365,16 @@ export const Board = () => {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-screen bg-gray-100 dark:bg-gray-900">
-        <div className="text-gray-600 dark:text-gray-300">Loading board...</div>
+      <div className="flex items-center justify-center h-screen bg-background-primary">
+        <div className="text-text-secondary">Loading board...</div>
       </div>
     )
   }
 
   if (error) {
     return (
-      <div className="flex items-center justify-center h-screen bg-gray-100 dark:bg-gray-900">
-        <div className="text-red-600">Error: {error}</div>
+      <div className="flex items-center justify-center h-screen bg-background-primary">
+        <div className="text-status-error">Error: {error}</div>
       </div>
     )
   }

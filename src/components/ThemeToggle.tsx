@@ -12,7 +12,7 @@ export function ThemeToggle() {
           ? 'Switch to light mode'
           : 'Switch to dark mode'
       }
-      className="inline-flex items-center gap-2 px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 transition"
+      className="inline-flex items-center gap-2 px-3 py-2 rounded-md border border-border-medium bg-background-primary text-text-secondary hover:bg-interactive-hover transition"
     >
       {currentTheme.type === 'dark' ? (
         // Sun icon

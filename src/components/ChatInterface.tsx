@@ -81,20 +81,20 @@ export function ChatInterface({
       {/* Header */}
       <div className="p-4 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+          <h2 className="text-lg font-semibold text-text-primary">
             AI Co-Creator
           </h2>
           <div className="flex space-x-2">
             <button
               onClick={onSaveTranscript}
-              className="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-200 dark:hover:bg-gray-600"
+              className="px-3 py-1 text-sm bg-secondary-100 dark:bg-secondary-900 text-secondary-700 dark:text-secondary-300 rounded hover:bg-secondary-200 dark:hover:bg-secondary-800"
               title="Save conversation transcript"
             >
               💾 Save
             </button>
             <button
               onClick={onResetConversation}
-              className="px-3 py-1 text-sm bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded hover:bg-red-200 dark:hover:bg-red-900/50"
+              className="px-3 py-1 text-sm bg-error-100 dark:bg-error-900/30 text-error-700 dark:text-error-300 rounded hover:bg-error-200 dark:hover:bg-error-900/50"
               title="Reset conversation"
             >
               🔄 Reset
@@ -106,7 +106,7 @@ export function ChatInterface({
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.length === 0 && (
-          <div className="text-center text-gray-500 dark:text-gray-400 py-8">
+          <div className="text-center text-text-muted py-8">
             <p className="text-lg mb-2">Welcome to AI Co-Creator!</p>
             <p className="text-sm">
               Start a conversation to generate user stories and acceptance
@@ -123,8 +123,8 @@ export function ChatInterface({
             <div
               className={`max-w-[80%] rounded-lg p-3 ${
                 message.role === 'user'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100'
+                  ? 'bg-primary-600 text-text-inverse'
+                  : 'bg-secondary-100 dark:bg-secondary-900 text-text-primary'
               }`}
             >
               <div className="whitespace-pre-wrap text-sm">
@@ -137,7 +137,7 @@ export function ChatInterface({
                 <div className="flex space-x-2 mt-2">
                   <button
                     onClick={() => handleInsertMessage(message)}
-                    className="text-xs px-2 py-1 bg-gray-200 dark:bg-gray-600 rounded hover:bg-gray-300 dark:hover:bg-gray-500"
+                    className="text-xs px-2 py-1 bg-accent-200 dark:bg-accent-700 rounded hover:bg-accent-300 dark:hover:bg-accent-600"
                     title="Insert into editor"
                   >
                     ➕ Insert
@@ -174,7 +174,7 @@ export function ChatInterface({
       {/* Prompt Templates */}
       <div className="p-4 border-t border-gray-200 dark:border-gray-700">
         <div className="mb-3">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
+          <label className="block text-sm font-medium text-text-secondary mb-2">
             Prompt Templates
           </label>
           <select
@@ -185,7 +185,7 @@ export function ChatInterface({
               )
               setSelectedTemplate(template || null)
             }}
-            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+            className="w-full px-3 py-2 border border-border-medium rounded-md bg-background-primary text-text-primary"
           >
             <option value="">Select a template...</option>
             {DEFAULT_PROMPT_TEMPLATES.map(template => (
@@ -198,7 +198,7 @@ export function ChatInterface({
       </div>
 
       {/* Input */}
-      <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+      <div className="p-4 border-t border-border-medium">
         <div className="flex space-x-2">
           <textarea
             value={input}
@@ -209,14 +209,14 @@ export function ChatInterface({
                 ? 'Describe your requirement...'
                 : 'Type your message...'
             }
-            className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 resize-none"
+            className="flex-1 px-3 py-2 border border-border-medium rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 bg-background-primary text-text-primary resize-none"
             rows={3}
             disabled={isLoading}
           />
           <button
             onClick={handleSendMessage}
             disabled={!input.trim() || isLoading}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-2 bg-primary-600 text-text-inverse rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading ? '...' : 'Send'}
           </button>

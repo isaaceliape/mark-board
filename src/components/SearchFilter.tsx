@@ -79,12 +79,12 @@ export const SearchFilter = () => {
             placeholder="Search cards..."
             value={searchInput}
             onChange={e => setSearchInput(e.target.value)}
-            className="w-64 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-64 px-3 py-2 border border-border-medium rounded-md bg-background-primary text-text-primary placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
           />
           {searchInput && (
             <button
               onClick={() => setSearchInput('')}
-              className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 text-text-muted hover:text-text-secondary"
             >
               ×
             </button>
@@ -97,7 +97,7 @@ export const SearchFilter = () => {
             <select
               value=""
               onChange={e => handleAddTag(e.target.value)}
-              className="appearance-none bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 pr-8 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent min-w-32"
+              className="appearance-none bg-background-primary border border-border-medium rounded-md px-3 py-2 pr-8 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent min-w-32"
             >
               <option value="">Add tag filter</option>
               {allTags
@@ -117,7 +117,7 @@ export const SearchFilter = () => {
             <select
               value=""
               onChange={e => handleAddAssignee(e.target.value || '')}
-              className="appearance-none bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 pr-8 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent min-w-32"
+              className="appearance-none bg-background-primary border border-border-medium rounded-md px-3 py-2 pr-8 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent min-w-32"
             >
               <option value="">Add assignee filter</option>
               {allAssignees
@@ -135,7 +135,7 @@ export const SearchFilter = () => {
         <button
           onClick={clearFilters}
           disabled={!hasActiveFilters}
-          className="px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700"
+          className="px-3 py-2 text-sm border border-border-medium rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent text-text-secondary hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20"
         >
           Clear All Filters
         </button>
@@ -148,10 +148,10 @@ export const SearchFilter = () => {
             <button
               key={`tag-${tag}`}
               onClick={() => handleRemoveTag(tag)}
-              className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors"
+              className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-primary-100 dark:bg-primary-900 text-primary-800 dark:text-primary-200 hover:bg-primary-200 dark:hover:bg-primary-800 transition-colors"
             >
               {tag}
-              <span className="ml-2 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200">
+              <span className="ml-2 text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-200">
                 ×
               </span>
             </button>
@@ -160,10 +160,10 @@ export const SearchFilter = () => {
             <button
               key={`assignee-${assignee}`}
               onClick={() => handleRemoveAssignee(assignee)}
-              className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 hover:bg-green-200 dark:hover:bg-green-800 transition-colors"
+              className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-success-100 dark:bg-success-900 text-success-800 dark:text-success-200 hover:bg-success-200 dark:hover:bg-success-800 transition-colors"
             >
               {assignee}
-              <span className="ml-2 text-green-600 dark:text-green-400 hover:text-green-800 dark:hover:text-green-200">
+              <span className="ml-2 text-success-600 dark:text-success-400 hover:text-success-800 dark:hover:text-success-200">
                 ×
               </span>
             </button>
