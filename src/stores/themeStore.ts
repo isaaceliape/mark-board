@@ -118,7 +118,7 @@ function generateCSSProperties(theme: AppTheme): Record<string, string> {
 }
 
 // Helper functions for iTerm2 scheme parsing and generation
-function parseITerm2Scheme(_schemeText: string): AppTheme | null {
+function parseITerm2Scheme(): AppTheme | null {
   // Simplified implementation - would need proper XML parsing in production
   try {
     // For now, return a basic theme based on common iTerm2 patterns
@@ -365,10 +365,10 @@ export const useThemeStore = create<ThemeState>()(
           get().setTheme(nextTheme.id)
         },
 
-        importITerm2Scheme: (schemeText: string) => {
+        importITerm2Scheme: (_schemeText: string) => {
           try {
             // This is a simplified parser - in production you'd use a proper XML parser
-            const theme = parseITerm2Scheme(schemeText)
+            const theme = parseITerm2Scheme()
             if (theme) {
               get().addCustomTheme(theme)
               get().setTheme(theme.id)

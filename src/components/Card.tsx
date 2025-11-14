@@ -73,15 +73,15 @@ export const Card = React.memo(function Card({
       style={style}
       {...attributes}
       {...listeners}
-      className={`bg-white dark:bg-gray-800 rounded-lg shadow-sm border p-4 hover:shadow-md hover:scale-105 transition-all duration-200 cursor-pointer relative ${
+      className={`bg-background-elevated rounded-lg shadow-sm border-border-light border p-4 hover:shadow-md hover:scale-105 transition-all duration-200 cursor-pointer relative ${
         selected
-          ? 'border-blue-500 ring-2 ring-blue-200'
-          : 'border-gray-200 dark:border-gray-700'
+          ? 'border-primary-500 ring-2 ring-primary-200'
+          : 'border-border-light'
       }`}
     >
       <div className="flex justify-between items-start mb-2">
         <h3
-          className="font-medium text-gray-900 dark:text-gray-100 flex-1 cursor-pointer"
+          className="font-medium text-text-primary flex-1 cursor-pointer"
           onClick={e => {
             e.stopPropagation()
             onEdit()
@@ -93,8 +93,8 @@ export const Card = React.memo(function Card({
           onClick={handleDelete}
           className={`ml-2 px-2 py-1 rounded transition-all font-semibold ${
             showDeleteConfirm
-              ? 'bg-red-600 text-white hover:bg-red-700 shadow-lg scale-110 text-sm'
-              : 'bg-red-500 text-white hover:bg-red-600 text-xs shadow-md'
+              ? 'bg-status-error text-text-inverse hover:bg-red-700 shadow-lg scale-110 text-sm'
+              : 'bg-status-error text-text-inverse hover:bg-red-600 text-xs shadow-md'
           }`}
           title={showDeleteConfirm ? 'Click again to confirm' : 'Delete card'}
           type="button"
@@ -105,7 +105,7 @@ export const Card = React.memo(function Card({
 
       {card.content && (
         <p
-          className="text-sm text-gray-600 dark:text-gray-300 mb-3 line-clamp-3 cursor-pointer"
+          className="text-sm text-text-secondary mb-3 line-clamp-3 cursor-pointer"
           onClick={e => {
             e.stopPropagation()
             onEdit()
@@ -121,7 +121,7 @@ export const Card = React.memo(function Card({
             {card.metadata.tags.map(tag => (
               <span
                 key={tag}
-                className="bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-2 py-1 rounded transition-colors duration-200"
+                className="bg-primary-100 text-primary-700 px-2 py-1 rounded transition-colors duration-200"
               >
                 {tag}
               </span>
@@ -130,13 +130,13 @@ export const Card = React.memo(function Card({
         )}
 
         {card.metadata.assignee && (
-          <span className="bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 px-2 py-1 rounded transition-colors duration-200">
+          <span className="bg-secondary-100 text-secondary-700 px-2 py-1 rounded transition-colors duration-200">
             {card.metadata.assignee}
           </span>
         )}
 
         {card.metadata.dueDate && (
-          <span className="bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 px-2 py-1 rounded transition-colors duration-200">
+          <span className="bg-status-warning text-text-inverse px-2 py-1 rounded transition-colors duration-200">
             Due {formatDate(card.metadata.dueDate)}
           </span>
         )}
@@ -144,7 +144,7 @@ export const Card = React.memo(function Card({
 
       <button
         onClick={handleCoCreate}
-        className="absolute bottom-2 right-2 text-gray-400 hover:text-blue-500 dark:text-gray-500 dark:hover:text-blue-400 p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
+        className="absolute bottom-2 right-2 text-text-muted hover:text-primary-500 p-1 rounded hover:bg-interactive-hover transition-colors duration-200"
         title="Edit with AI in Co-Creator"
         type="button"
       >

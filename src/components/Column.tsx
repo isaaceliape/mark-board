@@ -52,13 +52,11 @@ export const Column = React.memo(function Column({
   const editingCard = cards.find(card => card.id === editingCardId)
 
   return (
-    <div className="flex flex-col h-full w-72 sm:w-80 bg-gray-50 dark:bg-gray-900 rounded-lg">
-      <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-t-lg">
+    <div className="flex flex-col h-full w-72 sm:w-80 bg-background-tertiary rounded-lg">
+      <div className="px-4 py-3 border-b border-border-light bg-background-elevated rounded-t-lg">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
-            {title}
-          </h2>
-          <span className="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 text-sm font-medium px-2 py-1 rounded-full">
+          <h2 className="text-lg font-semibold text-text-primary">{title}</h2>
+          <span className="bg-background-secondary text-text-secondary text-sm font-medium px-2 py-1 rounded-full">
             {cards.length}
           </span>
         </div>
@@ -66,8 +64,8 @@ export const Column = React.memo(function Column({
 
       <div
         ref={setNodeRef}
-        className={`flex-1 px-4 py-3 space-y-3 overflow-y-auto dark:bg-gray-600 transition-colors ${
-          isOver ? 'bg-blue-50 dark:bg-blue-900/30' : ''
+        className={`flex-1 px-4 py-3 space-y-3 overflow-y-auto bg-background-primary transition-colors ${
+          isOver ? 'bg-primary-50' : ''
         }`}
       >
         <SortableContext
@@ -95,10 +93,10 @@ export const Column = React.memo(function Column({
         </SortableContext>
       </div>
 
-      <div className="px-4 py-3 border-t dark:bg-gray-700 border-gray-200 bg-white rounded-b-lg">
+      <div className="px-4 py-3 border-t border-border-light bg-background-elevated rounded-b-lg">
         <button
           onClick={() => onOpenCreateModal(id)}
-          className="w-full px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-700 dark:bg-gray-800 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-4 py-2 text-text-secondary bg-background-secondary hover:bg-interactive-hover rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
         >
           + New Card
         </button>

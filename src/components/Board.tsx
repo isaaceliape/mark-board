@@ -385,7 +385,7 @@ export const Board = () => {
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
-      <div className="flex gap-4 p-6 h-screen overflow-x-auto bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
+      <div className="flex gap-4 p-6 h-screen overflow-x-auto bg-background-secondary transition-colors duration-300">
         {filteredColumns.map(column => (
           <Column
             key={column.id}
@@ -426,7 +426,7 @@ export const Board = () => {
 
       {editingCard && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-background-elevated rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               <CardEditor
                 card={editingCard}
@@ -440,7 +440,7 @@ export const Board = () => {
 
       {creatingCard && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-background-elevated rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               <CardEditor
                 onSave={data => {
