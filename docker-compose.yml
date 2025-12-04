@@ -1,9 +1,11 @@
-version: '3.8'
-
 services:
   mark-board:
-    build: .
+    image: mark-board:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - '8080:80'
+      - '2222:22'
     environment:
       - VITE_BASE=/
