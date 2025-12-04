@@ -1,0 +1,22 @@
+services:
+  mark-board-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    image: mark-board:dev
+    ports:
+      - '5173:5173'  # Vite dev server
+      - '2222:22'    # SSH
+    environment:
+      - VITE_BASE=/
+    volumes:
+      - .:/app
+      - mark-board-dev-data:/app/kanban-data
+      - mark-board-dev-ssh:/root/.ssh
+      - /app/node_modules  # Prevent host node_modules from shadowing container's
+
+volumes:
+  mark-board-dev-data:
+    driver: local
+  mark-board-dev-ssh:
+    driver: local

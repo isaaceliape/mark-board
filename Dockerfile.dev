@@ -1,0 +1,66 @@
+# Development image with all tools and hot-reload capability
+FROM oven/bun:latest
+
+WORKDIR /app
+
+# Install additional development tools (vim, git, etc.)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git \
+    curl \
+    vim \
+    openssh-server \
+    openssh-sftp-server \
+    supervisor \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create SSH directories
+RUN mkdir -p /run/sshd /root/.ssh && \
+    chmod 700 /root/.ssh
+
+# Generate SSH host keys
+RUN ssh-keygen -A
+
+# Create supervisord config directory
+RUN mkdir -p /etc/supervisor/conf.d
+
+# Copy package files
+COPY package.json bun.lock* ./
+
+# Install dependencies
+RUN bun install --frozen-lockfile
+
+# Copy source code
+COPY . .
+
+# Create supervisord config for development
+RUN cat > /etc/supervisor/conf.d/supervisord.conf << 'EOF'
+[supervisord]
+nodaemon=true
+logfile=/var/log/supervisord.log
+pidfile=/var/run/supervisord.pid
+
+[program:sshd]
+command=/usr/sbin/sshd -D
+autostart=true
+autorestart=true
+stderr_logfile=/var/log/sshd.err.log
+stdout_logfile=/var/log/sshd.out.log
+
+[program:dev-server]
+command=bun run dev
+directory=/app
+autostart=true
+autorestart=true
+stderr_logfile=/var/log/dev-server.err.log
+stdout_logfile=/var/log/dev-server.out.log
+EOF
+
+# Expose ports (5173 for Vite dev server, 22 for SSH)
+EXPOSE 5173 22
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
+    CMD curl -f http://localhost:5173/ || exit 1
+
+# Start supervisord
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
