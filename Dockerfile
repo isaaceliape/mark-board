@@ -21,12 +21,13 @@ RUN bun run build
 # Production stage with SSH - using Ubuntu for better SSH support
 FROM ubuntu:22.04
 
-# Install nginx, SSH server, and supervisor
+# Install nginx, SSH server, supervisor, and curl (for health check)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     nginx \
     openssh-server \
     openssh-sftp-server \
     supervisor \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Create SSH directories
