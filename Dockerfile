@@ -37,6 +37,11 @@ RUN mkdir -p /run/sshd /root/.ssh && \
 # Generate SSH host keys
 RUN ssh-keygen -A
 
+# Configure SSH for key-based authentication only
+COPY ssh_config/sshd_config /etc/ssh/sshd_config
+RUN chmod 600 /etc/ssh/sshd_config && \
+    sshd -t  # Verify SSH config is valid
+
 # Create supervisord config directory
 RUN mkdir -p /etc/supervisor/conf.d
 

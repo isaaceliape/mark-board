@@ -105,13 +105,90 @@ docker compose -f docker-compose.dev.yml exec mark-board-dev bun run lint
 docker compose -f docker-compose.dev.yml exec mark-board-dev bun run format:fix
 ```
 
-## SSH Access
+## SSH Access (Key-Based Authentication)
+
+SSH is configured for **key-based authentication only**. Passwords are disabled for security.
+
+### Initial Setup: Copy Your Public Key
+
+```bash
+# Generate ED25519 key (if you don't have one)
+ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519
+
+# Copy your public key to the container
+docker cp ~/.ssh/id_ed25519.pub mark-board-mark-board-dev-1:/root/.ssh/authorized_keys
+
+# Set proper permissions
+docker exec mark-board-mark-board-dev-1 chmod 600 /root/.ssh/authorized_keys
+```
 
 ### Connect to Container
 
 ```bash
-ssh -p 2222 root@localhost
+# Using your SSH key
+ssh -p 2222 -i ~/.ssh/id_ed25519 root@localhost
+
+# Or add to ~/.ssh/config for easier access (see below)
+ssh mark-board-dev
 ```
+
+### Add SSH Config Entry (Recommended)
+
+Edit or create `~/.ssh/config`:
+
+```
+Host mark-board-dev
+    HostName localhost
+    Port 2222
+    User root
+    IdentityFile ~/.ssh/id_ed25519
+    StrictHostKeyChecking accept-new
+```
+
+Then connect simply with:
+
+```bash
+ssh mark-board-dev
+```
+
+### SFTP Access (Key-Based)
+
+```bash
+sftp -P 2222 root@localhost
+# Or using SSH config:
+sftp mark-board-dev
+```
+
+### Using SSH Agent (for passphrase-protected keys)
+
+```bash
+# Start SSH agent (usually already running)
+eval "$(ssh-agent -s)"
+
+# Add your key
+ssh-add ~/.ssh/id_ed25519
+
+# SSH won't prompt for passphrase now
+ssh mark-board-dev
+```
+
+### Troubleshooting SSH Connection
+
+```bash
+# Check if SSH service is running
+docker compose -f docker-compose.dev.yml exec mark-board-dev ps aux | grep sshd
+
+# View SSH logs
+docker compose -f docker-compose.dev.yml exec mark-board-dev tail -f /var/log/sshd.out.log
+
+# Verify SSH config is valid
+docker compose -f docker-compose.dev.yml exec mark-board-dev sshd -t
+
+# Check authorized_keys file
+docker compose -f docker-compose.dev.yml exec mark-board-dev cat /root/.ssh/authorized_keys
+```
+
+For comprehensive SSH setup guide, see [SSH_KEY_AUTH.md](SSH_KEY_AUTH.md)
 
 ### Set Password (optional)
 
