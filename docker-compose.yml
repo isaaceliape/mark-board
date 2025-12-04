@@ -9,3 +9,12 @@ services:
       - '2222:22'
     environment:
       - VITE_BASE=/
+    volumes:
+      - mark-board-data:/app/kanban-data
+      - mark-board-ssh:/root/.ssh
+
+volumes:
+  mark-board-data:
+    driver: local
+  mark-board-ssh:
+    driver: local
